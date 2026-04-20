@@ -27,6 +27,12 @@ public class Certificado {
     @Column(nullable = false)
     private String arquivoPath;
 
+    @Column(name = "justificativa")
+    private String justificativa;
+
+    @Column(name = "horas_validadas")
+    private Integer horasValidadas;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "aluno_id", nullable = false)
     private User aluno;
@@ -55,6 +61,10 @@ public class Certificado {
     public void setStatus(StatusCertificado status) { this.status = status; }
     public String getArquivoPath() { return arquivoPath; }
     public void setArquivoPath(String arquivoPath) { this.arquivoPath = arquivoPath; }
+    public String getJustificativa() { return justificativa; }
+    public void setJustificativa(String justificativa) { this.justificativa = justificativa; }
+    public Integer getHorasValidadas() { return horasValidadas; }
+    public void setHorasValidadas(Integer horasValidadas) { this.horasValidadas = horasValidadas; }
     public User getAluno() { return aluno; }
     public void setAluno(User aluno) { this.aluno = aluno; }
 

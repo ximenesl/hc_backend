@@ -73,4 +73,11 @@ public class CertificadoController {
     public ResponseEntity<Integer> obterHorasAprovadas(@PathVariable Long alunoId) {
         return ResponseEntity.ok(certificadoService.calcularHorasAprovadas(alunoId));
     }
+
+    @GetMapping("/{id}/file")
+    @PreAuthorize("hasAnyRole('ALUNO', 'COORDENADOR', 'SUPER_ADMIN')")
+    @Operation(summary = "Baixar/Visualizar arquivo do certificado", description = "Retorna o arquivo do certificado")
+    public ResponseEntity<org.springframework.core.io.Resource> getCertificadoFile(@PathVariable Long id) {
+        return certificadoService.getFileAsResource(id);
+    }
 }

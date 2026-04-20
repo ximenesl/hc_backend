@@ -67,6 +67,13 @@ public class CertificadoService {
                 .orElseThrow(() -> new ResourceNotFoundException("Certificado não encontrado"));
 
         certificado.setStatus(request.getStatus());
+        if (request.getJustificativa() != null) {
+            certificado.setJustificativa(request.getJustificativa());
+        }
+        if (request.getHorasValidadas() != null) {
+            certificado.setHorasValidadas(request.getHorasValidadas());
+        }
+        
         certificado = certificadoRepository.save(certificado);
 
         return mapToResponse(certificado);
@@ -86,9 +93,33 @@ public class CertificadoService {
                 .cargaHoraria(c.getCargaHoraria())
                 .dataEmissao(c.getDataEmissao())
                 .status(c.getStatus().name())
-                .arquivoUrl(c.getArquivoPath()) 
+                .arquivoUrl("/api/certificates/" + c.getId() + "/file") 
                 .alunoId(c.getAluno().getId())
                 .alunoNome(c.getAluno().getNome())
+                .justificativa(c.getJustificativa())
+                .horasValidadas(c.getHorasValidadas())
                 .build();
+    }
+
+    public org.springframework.http.ResponseEntity<org.springframework.core.io.Resource> getFileAsResource(Long id) {
+        Certificado certificado = certificadoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Certificado não encontrado"));
+        try {
+            java.nio.file.Path path = java.nio.file.Paths.get(certificado.getArquivoPath());
+            org.springframework.core.io.Resource resource = new org.springframework.core.io.UrlResource(path.toUri());
+            if (resource.exists() || resource.isReadable()) {
+                String contentType = "application/pdf";
+                if(certificado.getArquivoPath().toLowerCase().endsWith(".png")) contentType = "image/png";
+                else if(certificado.getArquivoPath().toLowerCase().endsWith(".jpg") || certificado.getArquivoPath().toLowerCase().endsWith(".jpeg")) contentType = "image/jpeg";
+                return org.springframework.http.ResponseEntity.ok()
+                        .contentType(org.springframework.http.MediaType.parseMediaType(contentType))
+                        .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
+                        .body(resource);
+            } else {
+                throw new ResourceNotFoundException("Arquivo não pode ser lido");
+            }
+        } catch (java.net.MalformedURLException e) {
+            throw new ResourceNotFoundException("Erro ao ler o arquivo");
+        }
     }
 }
