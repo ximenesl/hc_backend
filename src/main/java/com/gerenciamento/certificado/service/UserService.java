@@ -22,16 +22,24 @@ public class UserService {
     private final UserRepository userRepository;
     private final CursoRepository cursoRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
-    public UserService(UserRepository userRepository, CursoRepository cursoRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, CursoRepository cursoRepository, PasswordEncoder passwordEncoder, EmailService emailService) {
         this.userRepository = userRepository;
         this.cursoRepository = cursoRepository;
         this.passwordEncoder = passwordEncoder;
+        this.emailService = emailService;
+    }
+
+    private String generateRandomPassword() {
+        java.security.SecureRandom random = new java.security.SecureRandom();
+        int num = random.nextInt(100000000);
+        return String.format("%08d", num);
     }
 
     public UserResponse createUser(UserRequest request, Authentication authentication) {
         if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_COORDENADOR"))
-                && authentication.getAuthorities().stream().noneMatch(a -> a.getAuthority().equals("ROLE_SUPER_ADMIN"))) {
+                && authentication.getAuthorities().stream().noneMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
             if (request.getRole() != Role.ALUNO) {
                 throw new org.springframework.security.access.AccessDeniedException("Coordenadores só podem criar usuários do tipo ALUNO.");
             }
@@ -47,15 +55,24 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("Curso informado não encontrado."));
         }
 
+        String rawPassword = request.getSenha();
+        if (rawPassword == null || rawPassword.trim().isEmpty()) {
+            rawPassword = generateRandomPassword();
+        }
+
         User user = User.builder()
                 .nome(request.getNome())
                 .email(request.getEmail())
-                .senha(passwordEncoder.encode(request.getSenha()))
+                .senha(passwordEncoder.encode(rawPassword))
                 .role(request.getRole())
                 .curso(cursoValido)
                 .build();
 
         user = userRepository.save(user);
+        
+        String html = "<p>Olá " + user.getNome() + ",</p><p>Sua conta no sistema de certificados foi criada.</p><p>Sua senha provisória de acesso é: <strong>" + rawPassword + "</strong></p><p>Recomendamos que você altere sua senha após o primeiro acesso.</p>";
+        emailService.enviarEmail(user.getEmail(), "Sua conta foi criada - Sistema de Certificados", html);
+
         return mapToResponse(user);
     }
 

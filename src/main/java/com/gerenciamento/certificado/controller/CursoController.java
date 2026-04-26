@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/cursos")
-@Tag(name = "Cursos", description = "Endpoints para gerenciamento de cursos (Requer SUPER_ADMIN para criar)")
+@Tag(name = "Cursos", description = "Endpoints para gerenciamento de cursos (Requer ADMIN para criar)")
 public class CursoController {
 
     private final CursoService cursoService;
@@ -25,21 +25,21 @@ public class CursoController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
-    @Operation(summary = "Criar novo curso", description = "Apenas SUPER_ADMIN pode criar")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Criar novo curso", description = "Apenas ADMIN pode criar")
     public ResponseEntity<CursoResponse> createCurso(@Valid @RequestBody CursoRequest request) {
         return new ResponseEntity<>(cursoService.createCurso(request), HttpStatus.CREATED);
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'COORDENADOR', 'ALUNO')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'COORDENADOR', 'ALUNO')")
     @Operation(summary = "Listar cursos")
     public ResponseEntity<List<CursoResponse>> listCursos() {
         return ResponseEntity.ok(cursoService.listCursos());
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'COORDENADOR', 'ALUNO')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'COORDENADOR', 'ALUNO')")
     @Operation(summary = "Buscar curso por ID")
     public ResponseEntity<CursoResponse> getCursoById(@PathVariable Long id) {
         return ResponseEntity.ok(cursoService.getCursoById(id));

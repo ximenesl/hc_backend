@@ -26,13 +26,13 @@ public class AdminSeeder implements CommandLineRunner {
     public void run(String... args) throws Exception {
         if (!userRepository.existsByEmail("admin@admin.com")) {
             User admin = User.builder()
-                    .nome("Super Admin")
+                    .nome("Admin")
                     .email("admin@admin.com")
                     .senha(passwordEncoder.encode("admin123"))
-                    .role(Role.SUPER_ADMIN)
+                    .role(Role.ADMIN)
                     .build();
             userRepository.save(admin);
-            System.out.println("Usuário SUPER_ADMIN criado com sucesso! (admin@admin.com / admin123)");
+            System.out.println("Usuário ADMIN criado com sucesso! (admin@admin.com / admin123)");
         }
 
         if (!cursoRepository.existsByNome("Análise e Desenvolvimento de Sistemas (ADS)")) {

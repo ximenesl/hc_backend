@@ -33,6 +33,12 @@ public class User implements UserDetails {
     @JoinColumn(name = "curso_id")
     private Curso curso;
 
+    @Column(name = "codigo_recuperacao")
+    private String codigoRecuperacao;
+
+    @Column(name = "codigo_recuperacao_expira_em")
+    private java.time.LocalDateTime codigoRecuperacaoExpiraEm;
+
     public User() {}
 
     public User(Long id, String nome, String email, String senha, Role role, Curso curso) {
@@ -61,6 +67,12 @@ public class User implements UserDetails {
 
     public Curso getCurso() { return curso; }
     public void setCurso(Curso curso) { this.curso = curso; }
+
+    public String getCodigoRecuperacao() { return codigoRecuperacao; }
+    public void setCodigoRecuperacao(String codigoRecuperacao) { this.codigoRecuperacao = codigoRecuperacao; }
+
+    public java.time.LocalDateTime getCodigoRecuperacaoExpiraEm() { return codigoRecuperacaoExpiraEm; }
+    public void setCodigoRecuperacaoExpiraEm(java.time.LocalDateTime codigoRecuperacaoExpiraEm) { this.codigoRecuperacaoExpiraEm = codigoRecuperacaoExpiraEm; }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

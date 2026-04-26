@@ -12,6 +12,7 @@ com\gerenciamento\certificado\security\SecurityConfig.class
 com\gerenciamento\certificado\repository\CursoRepository.class
 com\gerenciamento\certificado\entity\User.class
 com\gerenciamento\certificado\controller\AuthController.class
+com\gerenciamento\certificado\dto\ResetPasswordRequest.class
 com\gerenciamento\certificado\repository\UserRepository.class
 com\gerenciamento\certificado\exception\FileStorageException.class
 com\gerenciamento\certificado\dto\CertificadoResponse$CertificadoResponseBuilder.class
@@ -36,6 +37,8 @@ com\gerenciamento\certificado\service\UserService.class
 com\gerenciamento\certificado\service\CursoService.class
 com\gerenciamento\certificado\dto\UserResponse.class
 com\gerenciamento\certificado\security\JwtFilter.class
+com\gerenciamento\certificado\dto\ForgotPasswordRequest.class
 com\gerenciamento\certificado\service\LocalFileStorageServiceImpl.class
 com\gerenciamento\certificado\entity\Curso.class
 com\gerenciamento\certificado\config\AdminSeeder.class
+com\gerenciamento\certificado\service\EmailService.class

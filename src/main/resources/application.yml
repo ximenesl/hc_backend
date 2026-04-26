@@ -26,3 +26,6 @@ app:
     expirationMs: 86400000 # 24 horas
   file:
     upload-dir: temp/uploads
+
+resend:
+  api-key: ${RESEND_API_KEY:}

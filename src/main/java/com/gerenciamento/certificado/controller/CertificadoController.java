@@ -45,21 +45,21 @@ public class CertificadoController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'COORDENADOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'COORDENADOR')")
     @Operation(summary = "Listar todos os certificados", description = "Visão geral para a coordenação")
     public ResponseEntity<List<CertificadoResponse>> listarGeral() {
         return ResponseEntity.ok(certificadoService.listarTodos());
     }
 
     @GetMapping("/me/{alunoId}")
-    @PreAuthorize("hasAnyRole('ALUNO', 'COORDENADOR', 'SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('ALUNO', 'COORDENADOR', 'ADMIN')")
     @Operation(summary = "Listar certificados do aluno")
     public ResponseEntity<List<CertificadoResponse>> listarPorAluno(@PathVariable Long alunoId) {
         return ResponseEntity.ok(certificadoService.listarPorAluno(alunoId));
     }
 
     @PutMapping("/{id}/status")
-    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'COORDENADOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'COORDENADOR')")
     @Operation(summary = "Aprovar ou Rejeitar Certificado", description = "Muda o status do certificado")
     public ResponseEntity<CertificadoResponse> atualizarStatus(
             @PathVariable Long id,
@@ -68,14 +68,14 @@ public class CertificadoController {
     }
 
     @GetMapping("/horas/{alunoId}")
-    @PreAuthorize("hasAnyRole('ALUNO', 'COORDENADOR', 'SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('ALUNO', 'COORDENADOR', 'ADMIN')")
     @Operation(summary = "Somar horas aprovadas", description = "Retorna a soma automática das horas validadas")
     public ResponseEntity<Integer> obterHorasAprovadas(@PathVariable Long alunoId) {
         return ResponseEntity.ok(certificadoService.calcularHorasAprovadas(alunoId));
     }
 
     @GetMapping("/{id}/file")
-    @PreAuthorize("hasAnyRole('ALUNO', 'COORDENADOR', 'SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('ALUNO', 'COORDENADOR', 'ADMIN')")
     @Operation(summary = "Baixar/Visualizar arquivo do certificado", description = "Retorna o arquivo do certificado")
     public ResponseEntity<org.springframework.core.io.Resource> getCertificadoFile(@PathVariable Long id) {
         return certificadoService.getFileAsResource(id);
