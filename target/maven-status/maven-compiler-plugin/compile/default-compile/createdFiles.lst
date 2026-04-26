@@ -26,6 +26,7 @@ com\gerenciamento\certificado\controller\CertificadoController.class
 com\gerenciamento\certificado\service\FileStorageService.class
 com\gerenciamento\certificado\security\UserDetailsServiceImpl.class
 com\gerenciamento\certificado\dto\UserRequest.class
+com\gerenciamento\certificado\dto\VerifyCodeRequest.class
 com\gerenciamento\certificado\entity\StatusCertificado.class
 com\gerenciamento\certificado\dto\CertificadoResponse.class
 com\gerenciamento\certificado\CertificadoBackendApplication.class

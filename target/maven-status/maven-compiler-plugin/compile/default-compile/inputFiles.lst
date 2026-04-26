@@ -13,6 +13,7 @@ C:\Users\lucas\Documents\Projetos\hc\hc_backend\src\main\java\com\gerenciamento\
 C:\Users\lucas\Documents\Projetos\hc\hc_backend\src\main\java\com\gerenciamento\certificado\entity\Role.java
 C:\Users\lucas\Documents\Projetos\hc\hc_backend\src\main\java\com\gerenciamento\certificado\config\SwaggerConfig.java
 C:\Users\lucas\Documents\Projetos\hc\hc_backend\src\main\java\com\gerenciamento\certificado\repository\CursoRepository.java
+C:\Users\lucas\Documents\Projetos\hc\hc_backend\src\main\java\com\gerenciamento\certificado\dto\VerifyCodeRequest.java
 C:\Users\lucas\Documents\Projetos\hc\hc_backend\src\main\java\com\gerenciamento\certificado\entity\User.java
 C:\Users\lucas\Documents\Projetos\hc\hc_backend\src\main\java\com\gerenciamento\certificado\controller\CertificadoController.java
 C:\Users\lucas\Documents\Projetos\hc\hc_backend\src\main\java\com\gerenciamento\certificado\repository\UserRepository.java

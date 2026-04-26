@@ -75,6 +75,19 @@ public class AuthService {
         emailService.enviarEmail(user.getEmail(), "Código de Recuperação de Senha - Sistema de Certificados", html);
     }
 
+    public void verifyCode(com.gerenciamento.certificado.dto.VerifyCodeRequest request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
+
+        if (user.getCodigoRecuperacao() == null || !user.getCodigoRecuperacao().equals(request.getCodigo())) {
+            throw new IllegalArgumentException("Código de recuperação inválido.");
+        }
+
+        if (user.getCodigoRecuperacaoExpiraEm() == null || user.getCodigoRecuperacaoExpiraEm().isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Código de recuperação expirado.");
+        }
+    }
+
     public void resetPassword(ResetPasswordRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));

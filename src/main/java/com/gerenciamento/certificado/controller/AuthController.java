@@ -33,6 +33,13 @@ public class AuthController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/verify-code")
+    @Operation(summary = "Verificar código de recuperação", description = "Valida se o código de 6 dígitos informado é válido para o email")
+    public ResponseEntity<Void> verifyCode(@Valid @RequestBody com.gerenciamento.certificado.dto.VerifyCodeRequest request) {
+        authService.verifyCode(request);
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping("/reset-password")
     @Operation(summary = "Redefinir senha", description = "Valida o código de 6 dígitos e redefine a senha do usuário")
     public ResponseEntity<Void> resetPassword(@Valid @RequestBody com.gerenciamento.certificado.dto.ResetPasswordRequest request) {
