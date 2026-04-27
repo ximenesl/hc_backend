@@ -13,6 +13,8 @@ public class CertificadoResponse {
     private String alunoNome;
     private String justificativa;
     private Integer horasValidadas;
+    private Long regraId;
+    private String regraDescricao;
 
     public CertificadoResponse() {}
 
@@ -36,6 +38,10 @@ public class CertificadoResponse {
     public void setJustificativa(String justificativa) { this.justificativa = justificativa; }
     public Integer getHorasValidadas() { return horasValidadas; }
     public void setHorasValidadas(Integer horasValidadas) { this.horasValidadas = horasValidadas; }
+    public Long getRegraId() { return regraId; }
+    public void setRegraId(Long regraId) { this.regraId = regraId; }
+    public String getRegraDescricao() { return regraDescricao; }
+    public void setRegraDescricao(String regraDescricao) { this.regraDescricao = regraDescricao; }
 
     public static CertificadoResponseBuilder builder() { return new CertificadoResponseBuilder(); }
 
@@ -50,6 +56,8 @@ public class CertificadoResponse {
         private String alunoNome;
         private String justificativa;
         private Integer horasValidadas;
+        private Long regraId;
+        private String regraDescricao;
 
         public CertificadoResponseBuilder id(Long id) { this.id = id; return this; }
         public CertificadoResponseBuilder nome(String nome) { this.nome = nome; return this; }
@@ -61,6 +69,8 @@ public class CertificadoResponse {
         public CertificadoResponseBuilder alunoNome(String alunoNome) { this.alunoNome = alunoNome; return this; }
         public CertificadoResponseBuilder justificativa(String justificativa) { this.justificativa = justificativa; return this; }
         public CertificadoResponseBuilder horasValidadas(Integer horasValidadas) { this.horasValidadas = horasValidadas; return this; }
+        public CertificadoResponseBuilder regraId(Long regraId) { this.regraId = regraId; return this; }
+        public CertificadoResponseBuilder regraDescricao(String regraDescricao) { this.regraDescricao = regraDescricao; return this; }
 
         public CertificadoResponse build() {
             CertificadoResponse cr = new CertificadoResponse();
@@ -74,6 +84,8 @@ public class CertificadoResponse {
             cr.setAlunoNome(alunoNome);
             cr.setJustificativa(justificativa);
             cr.setHorasValidadas(horasValidadas);
+            cr.setRegraId(regraId);
+            cr.setRegraDescricao(regraDescricao);
             return cr;
         }
     }

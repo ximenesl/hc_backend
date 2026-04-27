@@ -21,6 +21,8 @@ public class UserRequest {
 
     private Long cursoId;
 
+    private Long turmaId;
+
     public UserRequest() {}
 
     public String getNome() { return nome; }
@@ -33,4 +35,6 @@ public class UserRequest {
     public void setRole(Role role) { this.role = role; }
     public Long getCursoId() { return cursoId; }
     public void setCursoId(Long cursoId) { this.cursoId = cursoId; }
+    public Long getTurmaId() { return turmaId; }
+    public void setTurmaId(Long turmaId) { this.turmaId = turmaId; }
 }

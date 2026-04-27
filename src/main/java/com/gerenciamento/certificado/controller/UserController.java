@@ -13,6 +13,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import com.gerenciamento.certificado.repository.UserRepository;
+import com.gerenciamento.certificado.entity.User;
+import com.gerenciamento.certificado.exception.ResourceNotFoundException;
 
 @RestController
 @RequestMapping("/api/users")
@@ -20,9 +23,11 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final UserRepository userRepository;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, UserRepository userRepository) {
         this.userService = userService;
+        this.userRepository = userRepository;
     }
 
     @PostMapping
@@ -37,6 +42,16 @@ public class UserController {
     @Operation(summary = "Listar todos os usuários")
     public ResponseEntity<List<UserResponse>> listUsers() {
         return ResponseEntity.ok(userService.listUsers());
+    }
+
+    @GetMapping("/me")
+    @PreAuthorize("hasAnyRole('ADMIN', 'COORDENADOR', 'ALUNO')")
+    @Operation(summary = "Buscar usuário logado")
+    public ResponseEntity<UserResponse> getCurrentUser(Authentication authentication) {
+        String email = authentication.getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
+        return ResponseEntity.ok(userService.getUserById(user.getId()));
     }
 
     @GetMapping("/{id}")

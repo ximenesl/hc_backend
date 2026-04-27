@@ -5,9 +5,12 @@ import com.gerenciamento.certificado.dto.UserRequest;
 import com.gerenciamento.certificado.dto.UserResponse;
 import com.gerenciamento.certificado.entity.Curso;
 import com.gerenciamento.certificado.entity.Role;
+import com.gerenciamento.certificado.entity.Turma;
 import com.gerenciamento.certificado.entity.User;
 import com.gerenciamento.certificado.repository.CursoRepository;
+import com.gerenciamento.certificado.repository.TurmaRepository;
 import com.gerenciamento.certificado.repository.UserRepository;
+import com.gerenciamento.certificado.dto.TurmaResponse;
 import com.gerenciamento.certificado.exception.ResourceNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,12 +24,14 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final CursoRepository cursoRepository;
+    private final TurmaRepository turmaRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
 
-    public UserService(UserRepository userRepository, CursoRepository cursoRepository, PasswordEncoder passwordEncoder, EmailService emailService) {
+    public UserService(UserRepository userRepository, CursoRepository cursoRepository, TurmaRepository turmaRepository, PasswordEncoder passwordEncoder, EmailService emailService) {
         this.userRepository = userRepository;
         this.cursoRepository = cursoRepository;
+        this.turmaRepository = turmaRepository;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
     }
@@ -55,6 +60,12 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("Curso informado não encontrado."));
         }
 
+        Turma turmaValida = null;
+        if (request.getTurmaId() != null) {
+            turmaValida = turmaRepository.findById(request.getTurmaId())
+                .orElseThrow(() -> new ResourceNotFoundException("Turma informada não encontrada."));
+        }
+
         String rawPassword = request.getSenha();
         if (rawPassword == null || rawPassword.trim().isEmpty()) {
             rawPassword = generateRandomPassword();
@@ -66,6 +77,7 @@ public class UserService {
                 .senha(passwordEncoder.encode(rawPassword))
                 .role(request.getRole())
                 .curso(cursoValido)
+                .turma(turmaValida)
                 .build();
 
         user = userRepository.save(user);
@@ -110,6 +122,12 @@ public class UserService {
             user.setCurso(cursoValido);
         }
 
+        if (request.getTurmaId() != null) {
+            Turma turmaValida = turmaRepository.findById(request.getTurmaId())
+                .orElseThrow(() -> new ResourceNotFoundException("Turma informada não encontrada."));
+            user.setTurma(turmaValida);
+        }
+
         user = userRepository.save(user);
         return mapToResponse(user);
     }
@@ -126,12 +144,17 @@ public class UserService {
         if (user.getCurso() != null) {
             cursoDto = new CursoResponse(user.getCurso().getId(), user.getCurso().getNome());
         }
+        TurmaResponse turmaDto = null;
+        if (user.getTurma() != null) {
+            turmaDto = new TurmaResponse(user.getTurma());
+        }
         return UserResponse.builder()
                 .id(user.getId())
                 .nome(user.getNome())
                 .email(user.getEmail())
                 .role(user.getRole())
                 .curso(cursoDto)
+                .turma(turmaDto)
                 .build();
     }
 }

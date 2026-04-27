@@ -33,6 +33,10 @@ public class User implements UserDetails {
     @JoinColumn(name = "curso_id")
     private Curso curso;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "turma_id")
+    private Turma turma;
+
     @Column(name = "codigo_recuperacao")
     private String codigoRecuperacao;
 
@@ -41,13 +45,14 @@ public class User implements UserDetails {
 
     public User() {}
 
-    public User(Long id, String nome, String email, String senha, Role role, Curso curso) {
+    public User(Long id, String nome, String email, String senha, Role role, Curso curso, Turma turma) {
         this.id = id;
         this.nome = nome;
         this.email = email;
         this.senha = senha;
         this.role = role;
         this.curso = curso;
+        this.turma = turma;
     }
 
     public Long getId() { return id; }
@@ -67,6 +72,9 @@ public class User implements UserDetails {
 
     public Curso getCurso() { return curso; }
     public void setCurso(Curso curso) { this.curso = curso; }
+
+    public Turma getTurma() { return turma; }
+    public void setTurma(Turma turma) { this.turma = turma; }
 
     public String getCodigoRecuperacao() { return codigoRecuperacao; }
     public void setCodigoRecuperacao(String codigoRecuperacao) { this.codigoRecuperacao = codigoRecuperacao; }
@@ -118,6 +126,7 @@ public class User implements UserDetails {
         private String senha;
         private Role role;
         private Curso curso;
+        private Turma turma;
 
         public UserBuilder id(Long id) { this.id = id; return this; }
         public UserBuilder nome(String nome) { this.nome = nome; return this; }
@@ -125,9 +134,10 @@ public class User implements UserDetails {
         public UserBuilder senha(String senha) { this.senha = senha; return this; }
         public UserBuilder role(Role role) { this.role = role; return this; }
         public UserBuilder curso(Curso curso) { this.curso = curso; return this; }
+        public UserBuilder turma(Turma turma) { this.turma = turma; return this; }
 
         public User build() {
-            return new User(id, nome, email, senha, role, curso);
+            return new User(id, nome, email, senha, role, curso, turma);
         }
     }
 }

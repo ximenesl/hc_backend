@@ -41,9 +41,13 @@ public class Certificado {
     @JoinColumn(name = "aluno_id", nullable = false)
     private User aluno;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "regra_id", nullable = false)
+    private Regra regra;
+
     public Certificado() {}
 
-    public Certificado(Long id, String nome, Integer cargaHoraria, LocalDate dataEmissao, StatusCertificado status, byte[] arquivoDados, String arquivoTipo, User aluno) {
+    public Certificado(Long id, String nome, Integer cargaHoraria, LocalDate dataEmissao, StatusCertificado status, byte[] arquivoDados, String arquivoTipo, User aluno, Regra regra) {
         this.id = id;
         this.nome = nome;
         this.cargaHoraria = cargaHoraria;
@@ -52,6 +56,7 @@ public class Certificado {
         this.arquivoDados = arquivoDados;
         this.arquivoTipo = arquivoTipo;
         this.aluno = aluno;
+        this.regra = regra;
     }
 
     public Long getId() { return id; }
@@ -74,6 +79,8 @@ public class Certificado {
     public void setHorasValidadas(Integer horasValidadas) { this.horasValidadas = horasValidadas; }
     public User getAluno() { return aluno; }
     public void setAluno(User aluno) { this.aluno = aluno; }
+    public Regra getRegra() { return regra; }
+    public void setRegra(Regra regra) { this.regra = regra; }
 
     public static CertificadoBuilder builder() { return new CertificadoBuilder(); }
 
@@ -86,6 +93,7 @@ public class Certificado {
         private byte[] arquivoDados;
         private String arquivoTipo;
         private User aluno;
+        private Regra regra;
 
         public CertificadoBuilder id(Long id) { this.id = id; return this; }
         public CertificadoBuilder nome(String nome) { this.nome = nome; return this; }
@@ -95,9 +103,10 @@ public class Certificado {
         public CertificadoBuilder arquivoDados(byte[] arquivoDados) { this.arquivoDados = arquivoDados; return this; }
         public CertificadoBuilder arquivoTipo(String arquivoTipo) { this.arquivoTipo = arquivoTipo; return this; }
         public CertificadoBuilder aluno(User aluno) { this.aluno = aluno; return this; }
+        public CertificadoBuilder regra(Regra regra) { this.regra = regra; return this; }
 
         public Certificado build() {
-            return new Certificado(id, nome, cargaHoraria, dataEmissao, status, arquivoDados, arquivoTipo, aluno);
+            return new Certificado(id, nome, cargaHoraria, dataEmissao, status, arquivoDados, arquivoTipo, aluno, regra);
         }
     }
 }

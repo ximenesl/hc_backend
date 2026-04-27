@@ -23,20 +23,20 @@ public class CursoService {
         if (cursoRepository.existsByNome(request.getNome())) {
             throw new IllegalArgumentException("O curso já está cadastrado.");
         }
-        Curso curso = new Curso(null, request.getNome());
+        Curso curso = new Curso(null, request.getNome(), request.getHorasTotais() != null ? request.getHorasTotais() : 100);
         curso = cursoRepository.save(curso);
-        return new CursoResponse(curso.getId(), curso.getNome());
+        return new CursoResponse(curso.getId(), curso.getNome(), curso.getHorasTotais());
     }
 
     public List<CursoResponse> listCursos() {
         return cursoRepository.findAll().stream()
-                .map(c -> new CursoResponse(c.getId(), c.getNome()))
+                .map(c -> new CursoResponse(c.getId(), c.getNome(), c.getHorasTotais()))
                 .collect(Collectors.toList());
     }
 
     public CursoResponse getCursoById(Long id) {
         Curso curso = cursoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Curso não encontrado"));
-        return new CursoResponse(curso.getId(), curso.getNome());
+        return new CursoResponse(curso.getId(), curso.getNome(), curso.getHorasTotais());
     }
 }

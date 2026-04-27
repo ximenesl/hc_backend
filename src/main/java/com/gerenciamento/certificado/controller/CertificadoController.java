@@ -36,10 +36,11 @@ public class CertificadoController {
             @RequestParam("nome") String nome,
             @RequestParam("cargaHoraria") Integer cargaHoraria,
             @RequestParam("dataEmissao") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataEmissao,
-            @RequestParam("arquivo") MultipartFile arquivo) {
+            @RequestParam("arquivo") MultipartFile arquivo,
+            @RequestParam("regraId") Long regraId) {
             
         return new ResponseEntity<>(
-            certificadoService.uploadCertificado(alunoId, nome, cargaHoraria, dataEmissao, arquivo), 
+            certificadoService.uploadCertificado(alunoId, nome, cargaHoraria, dataEmissao, arquivo, regraId), 
             HttpStatus.CREATED
         );
     }

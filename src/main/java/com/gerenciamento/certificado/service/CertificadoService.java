@@ -7,6 +7,8 @@ import com.gerenciamento.certificado.entity.StatusCertificado;
 import com.gerenciamento.certificado.entity.User;
 import com.gerenciamento.certificado.repository.CertificadoRepository;
 import com.gerenciamento.certificado.repository.UserRepository;
+import com.gerenciamento.certificado.repository.RegraRepository;
+import com.gerenciamento.certificado.entity.Regra;
 import com.gerenciamento.certificado.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,15 +22,19 @@ public class CertificadoService {
 
     private final CertificadoRepository certificadoRepository;
     private final UserRepository userRepository;
+    private final RegraRepository regraRepository;
 
-    public CertificadoService(CertificadoRepository certificadoRepository, UserRepository userRepository) {
+    public CertificadoService(CertificadoRepository certificadoRepository, UserRepository userRepository, RegraRepository regraRepository) {
         this.certificadoRepository = certificadoRepository;
         this.userRepository = userRepository;
+        this.regraRepository = regraRepository;
     }
 
-    public CertificadoResponse uploadCertificado(Long alunoId, String nome, Integer cargaHoraria, LocalDate dataEmissao, MultipartFile arquivo) {
+    public CertificadoResponse uploadCertificado(Long alunoId, String nome, Integer cargaHoraria, LocalDate dataEmissao, MultipartFile arquivo, Long regraId) {
         User aluno = userRepository.findById(alunoId)
                 .orElseThrow(() -> new ResourceNotFoundException("Aluno não encontrado"));
+        Regra regra = regraRepository.findById(regraId)
+                .orElseThrow(() -> new ResourceNotFoundException("Regra não encontrada"));
 
         byte[] dados;
         String tipo;
@@ -50,6 +56,7 @@ public class CertificadoService {
                 .arquivoDados(dados)
                 .arquivoTipo(tipo)
                 .aluno(aluno)
+                .regra(regra)
                 .build();
 
         certificado = certificadoRepository.save(certificado);
@@ -107,6 +114,8 @@ public class CertificadoService {
                 .alunoNome(c.getAluno().getNome())
                 .justificativa(c.getJustificativa())
                 .horasValidadas(c.getHorasValidadas())
+                .regraId(c.getRegra() != null ? c.getRegra().getId() : null)
+                .regraDescricao(c.getRegra() != null ? c.getRegra().getDescricao() : null)
                 .build();
     }
 
