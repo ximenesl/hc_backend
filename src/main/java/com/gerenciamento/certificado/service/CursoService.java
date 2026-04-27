@@ -39,4 +39,17 @@ public class CursoService {
                 .orElseThrow(() -> new ResourceNotFoundException("Curso não encontrado"));
         return new CursoResponse(curso.getId(), curso.getNome(), curso.getHorasTotais());
     }
+
+    public CursoResponse updateCurso(Long id, CursoRequest request) {
+        Curso curso = cursoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Curso não encontrado"));
+        
+        curso.setNome(request.getNome());
+        if (request.getHorasTotais() != null) {
+            curso.setHorasTotais(request.getHorasTotais());
+        }
+        
+        curso = cursoRepository.save(curso);
+        return new CursoResponse(curso.getId(), curso.getNome(), curso.getHorasTotais());
+    }
 }

@@ -44,4 +44,11 @@ public class CursoController {
     public ResponseEntity<CursoResponse> getCursoById(@PathVariable Long id) {
         return ResponseEntity.ok(cursoService.getCursoById(id));
     }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Atualizar curso", description = "Apenas ADMIN pode atualizar")
+    public ResponseEntity<CursoResponse> updateCurso(@PathVariable Long id, @Valid @RequestBody CursoRequest request) {
+        return ResponseEntity.ok(cursoService.updateCurso(id, request));
+    }
 }
