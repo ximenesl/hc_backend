@@ -20,26 +20,35 @@ public class CertificadoService {
 
     private final CertificadoRepository certificadoRepository;
     private final UserRepository userRepository;
-    private final FileStorageService fileStorageService;
 
-    public CertificadoService(CertificadoRepository certificadoRepository, UserRepository userRepository, FileStorageService fileStorageService) {
+    public CertificadoService(CertificadoRepository certificadoRepository, UserRepository userRepository) {
         this.certificadoRepository = certificadoRepository;
         this.userRepository = userRepository;
-        this.fileStorageService = fileStorageService;
     }
 
     public CertificadoResponse uploadCertificado(Long alunoId, String nome, Integer cargaHoraria, LocalDate dataEmissao, MultipartFile arquivo) {
         User aluno = userRepository.findById(alunoId)
                 .orElseThrow(() -> new ResourceNotFoundException("Aluno não encontrado"));
 
-        String arquivoPath = fileStorageService.storeFile(arquivo);
+        byte[] dados;
+        String tipo;
+        try {
+            dados = arquivo.getBytes();
+            tipo = arquivo.getContentType();
+            if (tipo == null || tipo.isEmpty()) {
+                tipo = "application/pdf";
+            }
+        } catch (java.io.IOException e) {
+            throw new RuntimeException("Erro ao processar o arquivo", e);
+        }
 
         Certificado certificado = Certificado.builder()
                 .nome(nome)
                 .cargaHoraria(cargaHoraria)
                 .dataEmissao(dataEmissao)
                 .status(StatusCertificado.PENDENTE)
-                .arquivoPath(arquivoPath)
+                .arquivoDados(dados)
+                .arquivoTipo(tipo)
                 .aluno(aluno)
                 .build();
 
@@ -104,22 +113,16 @@ public class CertificadoService {
     public org.springframework.http.ResponseEntity<org.springframework.core.io.Resource> getFileAsResource(Long id) {
         Certificado certificado = certificadoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Certificado não encontrado"));
-        try {
-            java.nio.file.Path path = java.nio.file.Paths.get(certificado.getArquivoPath());
-            org.springframework.core.io.Resource resource = new org.springframework.core.io.UrlResource(path.toUri());
-            if (resource.exists() || resource.isReadable()) {
-                String contentType = "application/pdf";
-                if(certificado.getArquivoPath().toLowerCase().endsWith(".png")) contentType = "image/png";
-                else if(certificado.getArquivoPath().toLowerCase().endsWith(".jpg") || certificado.getArquivoPath().toLowerCase().endsWith(".jpeg")) contentType = "image/jpeg";
-                return org.springframework.http.ResponseEntity.ok()
-                        .contentType(org.springframework.http.MediaType.parseMediaType(contentType))
-                        .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
-                        .body(resource);
-            } else {
-                throw new ResourceNotFoundException("Arquivo não pode ser lido");
-            }
-        } catch (java.net.MalformedURLException e) {
-            throw new ResourceNotFoundException("Erro ao ler o arquivo");
+
+        if (certificado.getArquivoDados() == null) {
+            throw new ResourceNotFoundException("Arquivo não encontrado no banco de dados");
         }
+
+        org.springframework.core.io.ByteArrayResource resource = new org.springframework.core.io.ByteArrayResource(certificado.getArquivoDados());
+
+        return org.springframework.http.ResponseEntity.ok()
+                .contentType(org.springframework.http.MediaType.parseMediaType(certificado.getArquivoTipo()))
+                .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"certificado_" + id + "\"")
+                .body(resource);
     }
 }

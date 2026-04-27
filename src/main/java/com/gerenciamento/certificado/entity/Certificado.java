@@ -24,8 +24,12 @@ public class Certificado {
     @Column(nullable = false)
     private StatusCertificado status;
 
+    @Lob
     @Column(nullable = false)
-    private String arquivoPath;
+    private byte[] arquivoDados;
+
+    @Column(nullable = false)
+    private String arquivoTipo;
 
     @Column(name = "justificativa")
     private String justificativa;
@@ -39,13 +43,14 @@ public class Certificado {
 
     public Certificado() {}
 
-    public Certificado(Long id, String nome, Integer cargaHoraria, LocalDate dataEmissao, StatusCertificado status, String arquivoPath, User aluno) {
+    public Certificado(Long id, String nome, Integer cargaHoraria, LocalDate dataEmissao, StatusCertificado status, byte[] arquivoDados, String arquivoTipo, User aluno) {
         this.id = id;
         this.nome = nome;
         this.cargaHoraria = cargaHoraria;
         this.dataEmissao = dataEmissao;
         this.status = status;
-        this.arquivoPath = arquivoPath;
+        this.arquivoDados = arquivoDados;
+        this.arquivoTipo = arquivoTipo;
         this.aluno = aluno;
     }
 
@@ -59,8 +64,10 @@ public class Certificado {
     public void setDataEmissao(LocalDate dataEmissao) { this.dataEmissao = dataEmissao; }
     public StatusCertificado getStatus() { return status; }
     public void setStatus(StatusCertificado status) { this.status = status; }
-    public String getArquivoPath() { return arquivoPath; }
-    public void setArquivoPath(String arquivoPath) { this.arquivoPath = arquivoPath; }
+    public byte[] getArquivoDados() { return arquivoDados; }
+    public void setArquivoDados(byte[] arquivoDados) { this.arquivoDados = arquivoDados; }
+    public String getArquivoTipo() { return arquivoTipo; }
+    public void setArquivoTipo(String arquivoTipo) { this.arquivoTipo = arquivoTipo; }
     public String getJustificativa() { return justificativa; }
     public void setJustificativa(String justificativa) { this.justificativa = justificativa; }
     public Integer getHorasValidadas() { return horasValidadas; }
@@ -76,7 +83,8 @@ public class Certificado {
         private Integer cargaHoraria;
         private LocalDate dataEmissao;
         private StatusCertificado status;
-        private String arquivoPath;
+        private byte[] arquivoDados;
+        private String arquivoTipo;
         private User aluno;
 
         public CertificadoBuilder id(Long id) { this.id = id; return this; }
@@ -84,11 +92,12 @@ public class Certificado {
         public CertificadoBuilder cargaHoraria(Integer cargaHoraria) { this.cargaHoraria = cargaHoraria; return this; }
         public CertificadoBuilder dataEmissao(LocalDate dataEmissao) { this.dataEmissao = dataEmissao; return this; }
         public CertificadoBuilder status(StatusCertificado status) { this.status = status; return this; }
-        public CertificadoBuilder arquivoPath(String arquivoPath) { this.arquivoPath = arquivoPath; return this; }
+        public CertificadoBuilder arquivoDados(byte[] arquivoDados) { this.arquivoDados = arquivoDados; return this; }
+        public CertificadoBuilder arquivoTipo(String arquivoTipo) { this.arquivoTipo = arquivoTipo; return this; }
         public CertificadoBuilder aluno(User aluno) { this.aluno = aluno; return this; }
 
         public Certificado build() {
-            return new Certificado(id, nome, cargaHoraria, dataEmissao, status, arquivoPath, aluno);
+            return new Certificado(id, nome, cargaHoraria, dataEmissao, status, arquivoDados, arquivoTipo, aluno);
         }
     }
 }
