@@ -142,7 +142,7 @@ public class UserService {
     private UserResponse mapToResponse(User user) {
         CursoResponse cursoDto = null;
         if (user.getCurso() != null) {
-            cursoDto = new CursoResponse(user.getCurso().getId(), user.getCurso().getNome());
+            cursoDto = new CursoResponse(user.getCurso().getId(), user.getCurso().getNome(), user.getCurso().getHorasTotais());
         }
         TurmaResponse turmaDto = null;
         if (user.getTurma() != null) {
