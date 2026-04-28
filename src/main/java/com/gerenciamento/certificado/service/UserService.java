@@ -93,8 +93,13 @@ public class UserService {
             cursoRepository.save(cursoValido);
         }
         
-        String html = "<p>Olá " + user.getNome() + ",</p><p>Sua conta no sistema de certificados foi criada.</p><p>Sua senha provisória de acesso é: <strong>" + rawPassword + "</strong></p><p>Recomendamos que você altere sua senha após o primeiro acesso.</p>";
-        emailService.enviarEmail(user.getEmail(), "Sua conta foi criada - Sistema de Certificados", html);
+        try {
+            String html = "<p>Olá " + user.getNome() + ",</p><p>Sua conta no sistema de certificados foi criada.</p><p>Sua senha provisória de acesso é: <strong>" + rawPassword + "</strong></p><p>Recomendamos que você altere sua senha após o primeiro acesso.</p>";
+            emailService.enviarEmail(user.getEmail(), "Sua conta foi criada - Sistema de Certificados", html);
+        } catch (Exception e) {
+            System.err.println("Erro ao enviar email: " + e.getMessage());
+            // We don't rethrow to allow the user creation to succeed even if email fails (Resend limit/test mode)
+        }
 
         return mapToResponse(user);
     }

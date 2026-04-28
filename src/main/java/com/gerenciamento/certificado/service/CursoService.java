@@ -19,10 +19,12 @@ public class CursoService {
 
     private final CursoRepository cursoRepository;
     private final UserRepository userRepository;
+    private final TurmaRepository turmaRepository;
 
-    public CursoService(CursoRepository cursoRepository, UserRepository userRepository) {
+    public CursoService(CursoRepository cursoRepository, UserRepository userRepository, TurmaRepository turmaRepository) {
         this.cursoRepository = cursoRepository;
         this.userRepository = userRepository;
+        this.turmaRepository = turmaRepository;
     }
 
     public CursoResponse createCurso(CursoRequest request) {
@@ -92,6 +94,17 @@ public class CursoService {
         if (!cursoRepository.existsById(id)) {
             throw new ResourceNotFoundException("Curso não encontrado");
         }
+
+        // Check for students
+        if (userRepository.countByCursosIdAndRole(id, Role.ALUNO) > 0) {
+            throw new IllegalArgumentException("Não é possível excluir o curso pois existem alunos vinculados a ele.");
+        }
+
+        // Check for turmas
+        if (!turmaRepository.findByCursoId(id).isEmpty()) {
+            throw new IllegalArgumentException("Não é possível excluir o curso pois existem turmas vinculadas a ele.");
+        }
+
         cursoRepository.deleteById(id);
     }
 
