@@ -62,17 +62,17 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Atualizar usuário", description = "Apenas ADMIN pode atualizar os dados")
-    public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, @Valid @RequestBody UserRequest request) {
-        return ResponseEntity.ok(userService.updateUser(id, request));
+    @PreAuthorize("hasAnyRole('ADMIN', 'COORDENADOR')")
+    @Operation(summary = "Atualizar usuário", description = "Apenas ADMIN ou COORDENADOR (para alunos) pode atualizar")
+    public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, @Valid @RequestBody UserRequest request, Authentication authentication) {
+        return ResponseEntity.ok(userService.updateUser(id, request, authentication));
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Deletar usuário", description = "Apenas ADMIN pode deletar")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
+    @PreAuthorize("hasAnyRole('ADMIN', 'COORDENADOR')")
+    @Operation(summary = "Deletar usuário", description = "Apenas ADMIN ou COORDENADOR (para alunos) pode deletar")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id, Authentication authentication) {
+        userService.deleteUser(id, authentication);
         return ResponseEntity.noContent().build();
     }
 }

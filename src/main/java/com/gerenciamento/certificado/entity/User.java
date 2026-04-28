@@ -55,7 +55,7 @@ public class User implements UserDetails {
         this.email = email;
         this.senha = senha;
         this.role = role;
-        this.cursos = cursos;
+        this.cursos = (cursos != null) ? cursos : new java.util.HashSet<>();
         this.turma = turma;
     }
 
@@ -157,6 +157,7 @@ public class User implements UserDetails {
         public UserBuilder turma(Turma turma) { this.turma = turma; return this; }
 
         public User build() {
+            if (this.cursos == null) this.cursos = new java.util.HashSet<>();
             return new User(id, nome, email, senha, role, cursos, turma);
         }
     }

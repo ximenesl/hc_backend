@@ -8,6 +8,7 @@ import com.gerenciamento.certificado.entity.User;
 import com.gerenciamento.certificado.exception.ResourceNotFoundException;
 import com.gerenciamento.certificado.repository.CursoRepository;
 import com.gerenciamento.certificado.repository.UserRepository;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -43,7 +44,15 @@ public class CursoService {
         return mapToResponse(curso);
     }
 
-    public List<CursoResponse> listCursos() {
+    public List<CursoResponse> listCursos(Authentication authentication) {
+        if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_COORDENADOR"))
+                && authentication.getAuthorities().stream().noneMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            User user = userRepository.findByEmail(authentication.getName())
+                    .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
+            return cursoRepository.findByCoordenador(user).stream()
+                    .map(this::mapToResponse)
+                    .collect(Collectors.toList());
+        }
         return cursoRepository.findAll().stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());

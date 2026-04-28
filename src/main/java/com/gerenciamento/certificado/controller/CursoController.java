@@ -34,8 +34,8 @@ public class CursoController {
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'COORDENADOR', 'ALUNO')")
     @Operation(summary = "Listar cursos")
-    public ResponseEntity<List<CursoResponse>> listCursos() {
-        return ResponseEntity.ok(cursoService.listCursos());
+    public ResponseEntity<List<CursoResponse>> listCursos(org.springframework.security.core.Authentication authentication) {
+        return ResponseEntity.ok(cursoService.listCursos(authentication));
     }
 
     @GetMapping("/{id}")

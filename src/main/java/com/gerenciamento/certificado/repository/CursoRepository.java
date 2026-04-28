@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface CursoRepository extends JpaRepository<Curso, Long> {
     boolean existsByNome(String nome);
     Optional<Curso> findByNome(String nome);
+    java.util.List<Curso> findByCoordenador(com.gerenciamento.certificado.entity.User coordenador);
 }

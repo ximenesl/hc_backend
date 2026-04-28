@@ -111,9 +111,16 @@ public class UserService {
         return mapToResponse(user);
     }
 
-    public UserResponse updateUser(Long id, UserRequest request) {
+    public UserResponse updateUser(Long id, UserRequest request, Authentication authentication) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
+
+        if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_COORDENADOR"))
+                && authentication.getAuthorities().stream().noneMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            if (user.getRole() != Role.ALUNO) {
+                throw new org.springframework.security.access.AccessDeniedException("Coordenadores só podem editar usuários do tipo ALUNO.");
+            }
+        }
 
         if (!user.getEmail().equals(request.getEmail()) && userRepository.existsByEmail(request.getEmail())) {
             throw new IllegalArgumentException("Email já está em uso.");
@@ -165,11 +172,17 @@ public class UserService {
         return mapToResponse(user);
     }
 
-    public void deleteUser(Long id) {
-        if (!userRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Usuário não encontrado");
+    public void deleteUser(Long id, Authentication authentication) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
+
+        if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_COORDENADOR"))
+                && authentication.getAuthorities().stream().noneMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            if (user.getRole() != Role.ALUNO) {
+                throw new org.springframework.security.access.AccessDeniedException("Coordenadores só podem excluir usuários do tipo ALUNO.");
+            }
         }
-        userRepository.deleteById(id);
+        userRepository.delete(user);
     }
 
     private UserResponse mapToResponse(User user) {
