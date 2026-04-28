@@ -41,7 +41,7 @@ public class UserResponse {
         private String nome;
         private String email;
         private Role role;
-        private CursoResponse curso;
+        private java.util.List<CursoResponse> cursos;
         private TurmaResponse turma;
 
         public UserResponseBuilder id(Long id) { this.id = id; return this; }
