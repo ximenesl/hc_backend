@@ -7,6 +7,8 @@ public class CursoResponse {
     private Long coordenadorId;
     private String coordenadorNome;
     private String coordenadorEmail;
+    private java.time.LocalDateTime dataCriacao;
+    private Long studentsCount;
 
     public CursoResponse() {}
 
@@ -16,13 +18,15 @@ public class CursoResponse {
         this.horasTotais = horasTotais;
     }
 
-    public CursoResponse(Long id, String nome, Integer horasTotais, Long coordenadorId, String coordenadorNome, String coordenadorEmail) {
+    public CursoResponse(Long id, String nome, Integer horasTotais, Long coordenadorId, String coordenadorNome, String coordenadorEmail, java.time.LocalDateTime dataCriacao, Long studentsCount) {
         this.id = id;
         this.nome = nome;
         this.horasTotais = horasTotais;
         this.coordenadorId = coordenadorId;
         this.coordenadorNome = coordenadorNome;
         this.coordenadorEmail = coordenadorEmail;
+        this.dataCriacao = dataCriacao;
+        this.studentsCount = studentsCount;
     }
 
     public Long getId() { return id; }
@@ -37,5 +41,9 @@ public class CursoResponse {
     public void setCoordenadorNome(String coordenadorNome) { this.coordenadorNome = coordenadorNome; }
     public String getCoordenadorEmail() { return coordenadorEmail; }
     public void setCoordenadorEmail(String coordenadorEmail) { this.coordenadorEmail = coordenadorEmail; }
+    public java.time.LocalDateTime getDataCriacao() { return dataCriacao; }
+    public void setDataCriacao(java.time.LocalDateTime dataCriacao) { this.dataCriacao = dataCriacao; }
+    public Long getStudentsCount() { return studentsCount; }
+    public void setStudentsCount(Long studentsCount) { this.studentsCount = studentsCount; }
 }
 

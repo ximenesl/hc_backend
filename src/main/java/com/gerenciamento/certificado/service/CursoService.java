@@ -95,13 +95,18 @@ public class CursoService {
             coordNome = curso.getCoordenador().getNome();
             coordEmail = curso.getCoordenador().getEmail();
         }
+        
+        long studentsCount = userRepository.countByCursosIdAndRole(curso.getId(), Role.ALUNO);
+
         return new CursoResponse(
                 curso.getId(),
                 curso.getNome(),
                 curso.getHorasTotais(),
                 coordId,
                 coordNome,
-                coordEmail
+                coordEmail,
+                curso.getDataCriacao(),
+                studentsCount
         );
     }
 }

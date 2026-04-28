@@ -20,6 +20,14 @@ public class Curso {
     @JoinColumn(name = "coordenador_id")
     private User coordenador;
 
+    @Column(name = "data_criacao", updatable = false)
+    private java.time.LocalDateTime dataCriacao;
+
+    @PrePersist
+    protected void onCreate() {
+        dataCriacao = java.time.LocalDateTime.now();
+    }
+
     public Curso() {}
 
     public Curso(Long id, String nome, Integer horasTotais) {
@@ -36,5 +44,8 @@ public class Curso {
     public void setHorasTotais(Integer horasTotais) { this.horasTotais = horasTotais; }
     public User getCoordenador() { return coordenador; }
     public void setCoordenador(User coordenador) { this.coordenador = coordenador; }
+
+    public java.time.LocalDateTime getDataCriacao() { return dataCriacao; }
+    public void setDataCriacao(java.time.LocalDateTime dataCriacao) { this.dataCriacao = dataCriacao; }
 }
 

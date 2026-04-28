@@ -76,11 +76,22 @@ public class UserService {
                 .email(request.getEmail())
                 .senha(passwordEncoder.encode(rawPassword))
                 .role(request.getRole())
-                .curso(cursoValido)
                 .turma(turmaValida)
                 .build();
 
+        if (request.getCursoId() != null) {
+            user.getCursos().add(cursoValido);
+        } else if (request.getCursoIds() != null && !request.getCursoIds().isEmpty()) {
+            java.util.List<Curso> cursos = cursoRepository.findAllById(request.getCursoIds());
+            user.getCursos().addAll(cursos);
+        }
+
         user = userRepository.save(user);
+
+        if (user.getRole() == Role.COORDENADOR && cursoValido != null) {
+            cursoValido.setCoordenador(user);
+            cursoRepository.save(cursoValido);
+        }
         
         String html = "<p>Olá " + user.getNome() + ",</p><p>Sua conta no sistema de certificados foi criada.</p><p>Sua senha provisória de acesso é: <strong>" + rawPassword + "</strong></p><p>Recomendamos que você altere sua senha após o primeiro acesso.</p>";
         emailService.enviarEmail(user.getEmail(), "Sua conta foi criada - Sistema de Certificados", html);
@@ -119,7 +130,29 @@ public class UserService {
         if (request.getCursoId() != null) {
             Curso cursoValido = cursoRepository.findById(request.getCursoId())
                 .orElseThrow(() -> new ResourceNotFoundException("Curso informado não encontrado."));
-            user.setCurso(cursoValido);
+            
+            user.getCursos().clear();
+            user.getCursos().add(cursoValido);
+
+            if (user.getRole() == Role.COORDENADOR) {
+                cursoValido.setCoordenador(user);
+                cursoRepository.save(cursoValido);
+            }
+        } else if (request.getCursoIds() != null) {
+            user.getCursos().clear();
+            if (!request.getCursoIds().isEmpty()) {
+                java.util.List<Curso> cursos = cursoRepository.findAllById(request.getCursoIds());
+                user.getCursos().addAll(cursos);
+                
+                if (user.getRole() == Role.COORDENADOR) {
+                    for (Curso c : cursos) {
+                        c.setCoordenador(user);
+                        cursoRepository.save(c);
+                    }
+                }
+            }
+        } else {
+            user.getCursos().clear();
         }
 
         if (request.getTurmaId() != null) {
@@ -140,10 +173,10 @@ public class UserService {
     }
 
     private UserResponse mapToResponse(User user) {
-        CursoResponse cursoDto = null;
-        if (user.getCurso() != null) {
-            cursoDto = new CursoResponse(user.getCurso().getId(), user.getCurso().getNome(), user.getCurso().getHorasTotais());
-        }
+        java.util.List<CursoResponse> cursosDto = user.getCursos().stream()
+                .map(c -> new CursoResponse(c.getId(), c.getNome(), c.getHorasTotais()))
+                .collect(Collectors.toList());
+        
         TurmaResponse turmaDto = null;
         if (user.getTurma() != null) {
             turmaDto = new TurmaResponse(user.getTurma());
@@ -153,7 +186,7 @@ public class UserService {
                 .nome(user.getNome())
                 .email(user.getEmail())
                 .role(user.getRole())
-                .curso(cursoDto)
+                .cursos(cursosDto)
                 .turma(turmaDto)
                 .build();
     }

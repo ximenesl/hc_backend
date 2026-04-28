@@ -29,9 +29,13 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Role role;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "curso_id")
-    private Curso curso;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "user_cursos",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "curso_id")
+    )
+    private java.util.Set<Curso> cursos = new java.util.HashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "turma_id")
@@ -45,13 +49,13 @@ public class User implements UserDetails {
 
     public User() {}
 
-    public User(Long id, String nome, String email, String senha, Role role, Curso curso, Turma turma) {
+    public User(Long id, String nome, String email, String senha, Role role, java.util.Set<Curso> cursos, Turma turma) {
         this.id = id;
         this.nome = nome;
         this.email = email;
         this.senha = senha;
         this.role = role;
-        this.curso = curso;
+        this.cursos = cursos;
         this.turma = turma;
     }
 
@@ -70,8 +74,19 @@ public class User implements UserDetails {
     public Role getRole() { return role; }
     public void setRole(Role role) { this.role = role; }
 
-    public Curso getCurso() { return curso; }
-    public void setCurso(Curso curso) { this.curso = curso; }
+    public java.util.Set<Curso> getCursos() { return cursos; }
+    public void setCursos(java.util.Set<Curso> cursos) { this.cursos = cursos; }
+
+    // Compatibility method
+    public Curso getCurso() { 
+        if (cursos == null || cursos.isEmpty()) return null;
+        return cursos.iterator().next();
+    }
+    public void setCurso(Curso curso) {
+        if (this.cursos == null) this.cursos = new java.util.HashSet<>();
+        this.cursos.clear();
+        if (curso != null) this.cursos.add(curso);
+    }
 
     public Turma getTurma() { return turma; }
     public void setTurma(Turma turma) { this.turma = turma; }
@@ -125,7 +140,7 @@ public class User implements UserDetails {
         private String email;
         private String senha;
         private Role role;
-        private Curso curso;
+        private java.util.Set<Curso> cursos;
         private Turma turma;
 
         public UserBuilder id(Long id) { this.id = id; return this; }
@@ -133,11 +148,16 @@ public class User implements UserDetails {
         public UserBuilder email(String email) { this.email = email; return this; }
         public UserBuilder senha(String senha) { this.senha = senha; return this; }
         public UserBuilder role(Role role) { this.role = role; return this; }
-        public UserBuilder curso(Curso curso) { this.curso = curso; return this; }
+        public UserBuilder cursos(java.util.Set<Curso> cursos) { this.cursos = cursos; return this; }
+        public UserBuilder curso(Curso curso) { 
+            if (this.cursos == null) this.cursos = new java.util.HashSet<>();
+            this.cursos.add(curso);
+            return this; 
+        }
         public UserBuilder turma(Turma turma) { this.turma = turma; return this; }
 
         public User build() {
-            return new User(id, nome, email, senha, role, curso, turma);
+            return new User(id, nome, email, senha, role, cursos, turma);
         }
     }
 }

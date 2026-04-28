@@ -20,7 +20,7 @@ public class UserRequest {
     private Role role;
 
     private Long cursoId;
-
+    private java.util.List<Long> cursoIds;
     private Long turmaId;
 
     public UserRequest() {}
@@ -35,6 +35,8 @@ public class UserRequest {
     public void setRole(Role role) { this.role = role; }
     public Long getCursoId() { return cursoId; }
     public void setCursoId(Long cursoId) { this.cursoId = cursoId; }
+    public java.util.List<Long> getCursoIds() { return cursoIds; }
+    public void setCursoIds(java.util.List<Long> cursoIds) { this.cursoIds = cursoIds; }
     public Long getTurmaId() { return turmaId; }
     public void setTurmaId(Long turmaId) { this.turmaId = turmaId; }
 }
