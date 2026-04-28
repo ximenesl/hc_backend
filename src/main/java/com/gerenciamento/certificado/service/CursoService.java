@@ -114,7 +114,7 @@ public class CursoService {
                 coordId,
                 coordNome,
                 coordEmail,
-                curso.getDataCriacao(),
+                curso.getDataCriacao() != null ? curso.getDataCriacao() : java.time.LocalDateTime.now(),
                 studentsCount
         );
     }
