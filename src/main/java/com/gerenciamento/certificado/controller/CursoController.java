@@ -51,4 +51,12 @@ public class CursoController {
     public ResponseEntity<CursoResponse> updateCurso(@PathVariable Long id, @Valid @RequestBody CursoRequest request) {
         return ResponseEntity.ok(cursoService.updateCurso(id, request));
     }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Deletar curso", description = "Apenas ADMIN pode deletar")
+    public ResponseEntity<Void> deleteCurso(@PathVariable Long id) {
+        cursoService.deleteCurso(id);
+        return ResponseEntity.noContent().build();
+    }
 }

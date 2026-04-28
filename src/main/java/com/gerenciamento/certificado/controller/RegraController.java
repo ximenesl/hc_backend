@@ -48,4 +48,9 @@ public class RegraController {
     public ResponseEntity<List<RegraResponse>> listRegrasPorCurso(@PathVariable Long cursoId) {
         return ResponseEntity.ok(regraService.listRegrasPorCurso(cursoId));
     }
+
+    @GetMapping("/curso/{cursoId}/tipos")
+    public ResponseEntity<List<String>> listTiposPorCurso(@PathVariable Long cursoId) {
+        return ResponseEntity.ok(regraService.listTiposPorCurso(cursoId));
+    }
 }

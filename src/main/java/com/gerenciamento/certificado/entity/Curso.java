@@ -16,6 +16,10 @@ public class Curso {
     @Column(name = "horas_totais")
     private Integer horasTotais;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "coordenador_id")
+    private User coordenador;
+
     public Curso() {}
 
     public Curso(Long id, String nome, Integer horasTotais) {
@@ -30,4 +34,7 @@ public class Curso {
     public void setNome(String nome) { this.nome = nome; }
     public Integer getHorasTotais() { return horasTotais; }
     public void setHorasTotais(Integer horasTotais) { this.horasTotais = horasTotais; }
+    public User getCoordenador() { return coordenador; }
+    public void setCoordenador(User coordenador) { this.coordenador = coordenador; }
 }
+

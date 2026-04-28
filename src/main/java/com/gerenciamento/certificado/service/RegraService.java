@@ -76,6 +76,10 @@ public class RegraService {
                 .collect(Collectors.toList());
     }
 
+    public List<String> listTiposPorCurso(Long cursoId) {
+        return regraRepository.findDistinctTipoByCursoId(cursoId);
+    }
+
     private RegraResponse mapToResponse(Regra regra) {
         return new RegraResponse(
                 regra.getId(),
