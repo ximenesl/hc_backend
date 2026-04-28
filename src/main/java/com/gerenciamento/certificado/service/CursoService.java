@@ -7,6 +7,7 @@ import com.gerenciamento.certificado.entity.Role;
 import com.gerenciamento.certificado.entity.User;
 import com.gerenciamento.certificado.exception.ResourceNotFoundException;
 import com.gerenciamento.certificado.repository.CursoRepository;
+import com.gerenciamento.certificado.repository.TurmaRepository;
 import com.gerenciamento.certificado.repository.UserRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
