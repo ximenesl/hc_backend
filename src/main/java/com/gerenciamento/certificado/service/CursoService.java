@@ -44,6 +44,14 @@ public class CursoService {
         }
 
         curso = cursoRepository.save(curso);
+        
+        // Sincronizar relacionamento bidirecional
+        if (curso.getCoordenador() != null) {
+            User coord = curso.getCoordenador();
+            coord.getCursos().add(curso);
+            userRepository.save(coord);
+        }
+
         return mapToResponse(curso);
     }
 
@@ -88,6 +96,16 @@ public class CursoService {
         }
         
         curso = cursoRepository.save(curso);
+
+        // Sincronizar relacionamento bidirecional
+        if (curso.getCoordenador() != null) {
+            User coord = curso.getCoordenador();
+            if (!coord.getCursos().contains(curso)) {
+                coord.getCursos().add(curso);
+                userRepository.save(coord);
+            }
+        }
+        
         return mapToResponse(curso);
     }
 
@@ -128,7 +146,7 @@ public class CursoService {
                 coordId,
                 coordNome,
                 coordEmail,
-                curso.getDataCriacao() != null ? curso.getDataCriacao() : java.time.LocalDateTime.now(),
+                curso.getDataCriacao(),
                 studentsCount
         );
     }

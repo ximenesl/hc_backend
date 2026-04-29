@@ -191,7 +191,14 @@ public class UserService {
     }
 
     private UserResponse mapToResponse(User user) {
-        java.util.List<CursoResponse> cursosDto = user.getCursos().stream()
+        java.util.Set<Curso> todosCursos = new java.util.HashSet<>(user.getCursos());
+        
+        // Se for coordenador, buscar cursos onde ele está definido como coordenador na tabela de cursos
+        if (user.getRole() == Role.COORDENADOR) {
+            todosCursos.addAll(cursoRepository.findByCoordenador(user));
+        }
+
+        java.util.List<CursoResponse> cursosDto = todosCursos.stream()
                 .map(c -> new CursoResponse(c.getId(), c.getNome(), c.getHorasTotais()))
                 .collect(Collectors.toList());
         
