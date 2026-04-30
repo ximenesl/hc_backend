@@ -114,9 +114,8 @@ public class CursoService {
     }
 
     public void deleteCurso(Long id) {
-        if (!cursoRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Curso não encontrado");
-        }
+        Curso curso = cursoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Curso não encontrado"));
 
         // Check for students
         if (userRepository.countByCursosIdAndRole(id, Role.ALUNO) > 0) {
@@ -128,7 +127,14 @@ public class CursoService {
             throw new IllegalArgumentException("Não é possível excluir o curso pois existem turmas vinculadas a ele.");
         }
 
-        cursoRepository.deleteById(id);
+        // Clear associations in user_cursos (coordinators, etc)
+        List<User> users = userRepository.findByCursosId(id);
+        for (User user : users) {
+            user.getCursos().remove(curso);
+            userRepository.save(user);
+        }
+
+        cursoRepository.delete(curso);
     }
 
     private CursoResponse mapToResponse(Curso curso) {
