@@ -21,12 +21,15 @@ public class CursoService {
     private final CursoRepository cursoRepository;
     private final UserRepository userRepository;
     private final TurmaRepository turmaRepository;
+    private final com.gerenciamento.certificado.repository.RegraRepository regraRepository;
 
-    public CursoService(CursoRepository cursoRepository, UserRepository userRepository, TurmaRepository turmaRepository) {
+    public CursoService(CursoRepository cursoRepository, UserRepository userRepository, TurmaRepository turmaRepository, com.gerenciamento.certificado.repository.RegraRepository regraRepository) {
         this.cursoRepository = cursoRepository;
         this.userRepository = userRepository;
         this.turmaRepository = turmaRepository;
+        this.regraRepository = regraRepository;
     }
+
 
     public CursoResponse createCurso(CursoRequest request) {
         if (cursoRepository.existsByNome(request.getNome())) {
@@ -127,15 +130,27 @@ public class CursoService {
             throw new IllegalArgumentException("Não é possível excluir o curso pois existem turmas vinculadas a ele.");
         }
 
+        // Check for regras (Rules)
+        if (!regraRepository.findByCursoId(id).isEmpty()) {
+            throw new IllegalArgumentException("Não é possível excluir o curso pois existem regras vinculadas a ele.");
+        }
+
         // Clear associations in user_cursos (coordinators, etc)
+        // This handles the ManyToMany relationship correctly
         List<User> users = userRepository.findByCursosId(id);
         for (User user : users) {
             user.getCursos().remove(curso);
             userRepository.save(user);
         }
 
+        // Final check to see if any user is still pointing to this course (if schema has stray columns)
+        // We set coordinator to null to clear the ManyToOne link in the courses table itself
+        curso.setCoordenador(null);
+        cursoRepository.save(curso);
+
         cursoRepository.delete(curso);
     }
+
 
     private CursoResponse mapToResponse(Curso curso) {
         Long coordId = null;
