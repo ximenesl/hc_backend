@@ -22,13 +22,16 @@ public class CursoService {
     private final UserRepository userRepository;
     private final TurmaRepository turmaRepository;
     private final com.gerenciamento.certificado.repository.RegraRepository regraRepository;
+    private final jakarta.persistence.EntityManager entityManager;
 
-    public CursoService(CursoRepository cursoRepository, UserRepository userRepository, TurmaRepository turmaRepository, com.gerenciamento.certificado.repository.RegraRepository regraRepository) {
+    public CursoService(CursoRepository cursoRepository, UserRepository userRepository, TurmaRepository turmaRepository, com.gerenciamento.certificado.repository.RegraRepository regraRepository, jakarta.persistence.EntityManager entityManager) {
         this.cursoRepository = cursoRepository;
         this.userRepository = userRepository;
         this.turmaRepository = turmaRepository;
         this.regraRepository = regraRepository;
+        this.entityManager = entityManager;
     }
+
 
 
     public CursoResponse createCurso(CursoRequest request) {
@@ -116,6 +119,7 @@ public class CursoService {
         return mapToResponse(curso);
     }
 
+    @org.springframework.transaction.annotation.Transactional
     public void deleteCurso(Long id) {
         Curso curso = cursoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Curso não encontrado"));
@@ -135,6 +139,12 @@ public class CursoService {
             throw new IllegalArgumentException("Não é possível excluir o curso pois existem regras vinculadas a ele.");
         }
 
+        // Clean up stray foreign key references in the users table directly (if any)
+        // This handles cases where the database schema might have evolved and left orphan columns
+        entityManager.createNativeQuery("UPDATE users SET curso_id = NULL WHERE curso_id = :id")
+                     .setParameter("id", id)
+                     .executeUpdate();
+
         // Clear associations in user_cursos (coordinators, etc)
         // This handles the ManyToMany relationship correctly
         List<User> users = userRepository.findByCursosId(id);
@@ -150,6 +160,7 @@ public class CursoService {
 
         cursoRepository.delete(curso);
     }
+
 
 
     private CursoResponse mapToResponse(Curso curso) {
