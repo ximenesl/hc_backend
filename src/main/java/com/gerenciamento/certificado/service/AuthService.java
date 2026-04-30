@@ -43,12 +43,18 @@ public class AuthService {
 
         String token = jwtUtil.generateToken(user.getEmail());
 
+        java.util.List<Long> cursoIds = user.getCursos().stream()
+                .map(com.gerenciamento.certificado.entity.Curso::getId)
+                .collect(java.util.stream.Collectors.toList());
+
         return TokenResponse.builder()
                 .token(token)
                 .id(user.getId())
                 .nome(user.getNome())
                 .role(user.getRole().name())
+                .cursoIds(cursoIds)
                 .build();
+
     }
 
     private String generateRecoveryCode() {

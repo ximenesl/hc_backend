@@ -5,6 +5,7 @@ public class TokenResponse {
     private Long id;
     private String nome;
     private String role;
+    private java.util.List<Long> cursoIds;
 
     public TokenResponse() {}
 
@@ -16,6 +17,8 @@ public class TokenResponse {
     public void setNome(String nome) { this.nome = nome; }
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
+    public java.util.List<Long> getCursoIds() { return cursoIds; }
+    public void setCursoIds(java.util.List<Long> cursoIds) { this.cursoIds = cursoIds; }
 
     public static TokenResponseBuilder builder() { return new TokenResponseBuilder(); }
 
@@ -24,11 +27,13 @@ public class TokenResponse {
         private Long id;
         private String nome;
         private String role;
+        private java.util.List<Long> cursoIds;
 
         public TokenResponseBuilder token(String token) { this.token = token; return this; }
         public TokenResponseBuilder id(Long id) { this.id = id; return this; }
         public TokenResponseBuilder nome(String nome) { this.nome = nome; return this; }
         public TokenResponseBuilder role(String role) { this.role = role; return this; }
+        public TokenResponseBuilder cursoIds(java.util.List<Long> cursoIds) { this.cursoIds = cursoIds; return this; }
 
         public TokenResponse build() {
             TokenResponse tr = new TokenResponse();
@@ -36,7 +41,9 @@ public class TokenResponse {
             tr.setId(id);
             tr.setNome(nome);
             tr.setRole(role);
+            tr.setCursoIds(cursoIds);
             return tr;
         }
     }
 }
+
