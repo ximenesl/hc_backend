@@ -17,11 +17,14 @@ public class TurmaService {
 
     private final TurmaRepository turmaRepository;
     private final CursoRepository cursoRepository;
+    private final com.gerenciamento.certificado.repository.UserRepository userRepository;
 
-    public TurmaService(TurmaRepository turmaRepository, CursoRepository cursoRepository) {
+    public TurmaService(TurmaRepository turmaRepository, CursoRepository cursoRepository, com.gerenciamento.certificado.repository.UserRepository userRepository) {
         this.turmaRepository = turmaRepository;
         this.cursoRepository = cursoRepository;
+        this.userRepository = userRepository;
     }
+
 
     public TurmaResponse createTurma(TurmaRequest request) {
         if (turmaRepository.existsByNomeAndCursoId(request.getNome(), request.getCursoId())) {
@@ -72,6 +75,12 @@ public class TurmaService {
     public void deleteTurma(Long id) {
         Turma turma = turmaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Turma não encontrada com o ID: " + id));
+        
+        if (userRepository.countByTurmaId(id) > 0) {
+            throw new IllegalArgumentException("Não é possível excluir a turma pois existem alunos vinculados a ela.");
+        }
+        
         turmaRepository.delete(turma);
     }
+
 }

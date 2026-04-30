@@ -10,4 +10,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByEmail(String email);
     long countByCursosIdAndRole(Long cursoId, com.gerenciamento.certificado.entity.Role role);
     java.util.List<User> findByCursosId(Long cursoId);
+    long countByTurmaId(Long turmaId);
 }
+
