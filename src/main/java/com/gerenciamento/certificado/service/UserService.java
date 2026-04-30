@@ -187,6 +187,14 @@ public class UserService {
                 throw new org.springframework.security.access.AccessDeniedException("Coordenadores só podem excluir usuários do tipo ALUNO.");
             }
         }
+        // If the user is a coordinator, remove the coordinator reference from its courses
+        if (user.getRole() == Role.COORDENADOR) {
+            java.util.List<com.gerenciamento.certificado.entity.Curso> cursos = cursoRepository.findByCoordenador(user);
+            for (com.gerenciamento.certificado.entity.Curso c : cursos) {
+                c.setCoordenador(null);
+                cursoRepository.save(c);
+            }
+        }
         userRepository.delete(user);
     }
 
