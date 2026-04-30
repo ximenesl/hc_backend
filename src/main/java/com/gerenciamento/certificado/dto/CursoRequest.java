@@ -10,6 +10,10 @@ public class CursoRequest {
 
     private Long coordenadorId;
 
+    private String sigla;
+
+    private String categoria;
+
     public CursoRequest() {}
 
     public String getNome() { return nome; }
@@ -18,5 +22,11 @@ public class CursoRequest {
     public void setHorasTotais(Integer horasTotais) { this.horasTotais = horasTotais; }
     public Long getCoordenadorId() { return coordenadorId; }
     public void setCoordenadorId(Long coordenadorId) { this.coordenadorId = coordenadorId; }
+
+    public String getSigla() { return sigla; }
+    public void setSigla(String sigla) { this.sigla = sigla; }
+
+    public String getCategoria() { return categoria; }
+    public void setCategoria(String categoria) { this.categoria = categoria; }
 }
 

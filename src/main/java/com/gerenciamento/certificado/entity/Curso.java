@@ -23,6 +23,12 @@ public class Curso {
     @Column(name = "data_criacao", updatable = false)
     private java.time.LocalDateTime dataCriacao;
 
+    @Column(name = "sigla")
+    private String sigla;
+
+    @Column(name = "categoria")
+    private String categoria;
+
     @PrePersist
     protected void onCreate() {
         dataCriacao = java.time.LocalDateTime.now();
@@ -47,5 +53,11 @@ public class Curso {
 
     public java.time.LocalDateTime getDataCriacao() { return dataCriacao; }
     public void setDataCriacao(java.time.LocalDateTime dataCriacao) { this.dataCriacao = dataCriacao; }
+
+    public String getSigla() { return sigla; }
+    public void setSigla(String sigla) { this.sigla = sigla; }
+
+    public String getCategoria() { return categoria; }
+    public void setCategoria(String categoria) { this.categoria = categoria; }
 }
 

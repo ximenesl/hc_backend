@@ -33,6 +33,8 @@ public class CursoService {
             throw new IllegalArgumentException("O curso já está cadastrado.");
         }
         Curso curso = new Curso(null, request.getNome(), request.getHorasTotais() != null ? request.getHorasTotais() : 100);
+        curso.setSigla(request.getSigla());
+        curso.setCategoria(request.getCategoria());
 
         if (request.getCoordenadorId() != null) {
             User coordenador = userRepository.findById(request.getCoordenadorId())
@@ -83,6 +85,8 @@ public class CursoService {
         if (request.getHorasTotais() != null) {
             curso.setHorasTotais(request.getHorasTotais());
         }
+        curso.setSigla(request.getSigla());
+        curso.setCategoria(request.getCategoria());
 
         if (request.getCoordenadorId() != null) {
             User coordenador = userRepository.findById(request.getCoordenadorId())
@@ -147,7 +151,9 @@ public class CursoService {
                 coordNome,
                 coordEmail,
                 curso.getDataCriacao(),
-                studentsCount
+                studentsCount,
+                curso.getSigla(),
+                curso.getCategoria()
         );
     }
 }

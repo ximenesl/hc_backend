@@ -9,6 +9,8 @@ public class CursoResponse {
     private String coordenadorEmail;
     private java.time.LocalDateTime dataCriacao;
     private Long studentsCount;
+    private String sigla;
+    private String categoria;
 
     public CursoResponse() {}
 
@@ -18,7 +20,15 @@ public class CursoResponse {
         this.horasTotais = horasTotais;
     }
 
-    public CursoResponse(Long id, String nome, Integer horasTotais, Long coordenadorId, String coordenadorNome, String coordenadorEmail, java.time.LocalDateTime dataCriacao, Long studentsCount) {
+    public CursoResponse(Long id, String nome, Integer horasTotais, String sigla, String categoria) {
+        this.id = id;
+        this.nome = nome;
+        this.horasTotais = horasTotais;
+        this.sigla = sigla;
+        this.categoria = categoria;
+    }
+
+    public CursoResponse(Long id, String nome, Integer horasTotais, Long coordenadorId, String coordenadorNome, String coordenadorEmail, java.time.LocalDateTime dataCriacao, Long studentsCount, String sigla, String categoria) {
         this.id = id;
         this.nome = nome;
         this.horasTotais = horasTotais;
@@ -27,6 +37,8 @@ public class CursoResponse {
         this.coordenadorEmail = coordenadorEmail;
         this.dataCriacao = dataCriacao;
         this.studentsCount = studentsCount;
+        this.sigla = sigla;
+        this.categoria = categoria;
     }
 
     public Long getId() { return id; }
@@ -45,5 +57,11 @@ public class CursoResponse {
     public void setDataCriacao(java.time.LocalDateTime dataCriacao) { this.dataCriacao = dataCriacao; }
     public Long getStudentsCount() { return studentsCount; }
     public void setStudentsCount(Long studentsCount) { this.studentsCount = studentsCount; }
+
+    public String getSigla() { return sigla; }
+    public void setSigla(String sigla) { this.sigla = sigla; }
+
+    public String getCategoria() { return categoria; }
+    public void setCategoria(String categoria) { this.categoria = categoria; }
 }
 
