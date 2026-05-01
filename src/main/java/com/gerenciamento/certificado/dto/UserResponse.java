@@ -49,6 +49,8 @@ public class UserResponse {
         private Role role;
         private java.util.List<CursoResponse> cursos;
         private TurmaResponse turma;
+        private Integer horasAprovadas;
+
 
         public UserResponseBuilder id(Long id) { this.id = id; return this; }
         public UserResponseBuilder nome(String nome) { this.nome = nome; return this; }
