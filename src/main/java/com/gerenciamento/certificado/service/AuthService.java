@@ -11,10 +11,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.stereotype.Service;
 
 import com.gerenciamento.certificado.dto.ForgotPasswordRequest;
-import com.gerenciamento.certificado.dto.ResetPasswordRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import java.security.SecureRandom;
-import java.time.LocalDateTime;
+
 
 @Service
 public class AuthService {
