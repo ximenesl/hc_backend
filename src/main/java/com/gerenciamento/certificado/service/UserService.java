@@ -104,7 +104,7 @@ public class UserService {
             String html = "<p>Olá " + user.getNome() + ",</p>"
                     + "<p>Sua conta no sistema de certificados foi criada.</p>"
                     + "<p>Sua senha provisória de acesso é: <strong>" + rawPassword + "</strong></p>"
-                    + "<p>Recomendamos que você altere sua senha clicando <a href=\"" + frontendUrl + "/change-password\">aqui</a>.</p>";
+                    + "<p>Recomendamos que você altere sua senha clicando <a href=\"" + frontendUrl + "/redefine-password\">aqui</a>.</p>";
             emailService.enviarEmail(user.getEmail(), "Sua conta foi criada - Sistema de Certificados", html);
         } catch (Exception e) {
 

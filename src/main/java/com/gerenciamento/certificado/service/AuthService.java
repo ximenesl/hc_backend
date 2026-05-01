@@ -76,7 +76,7 @@ public class AuthService {
         String html = "<p>Olá " + user.getNome() + ",</p>"
                 + "<p>Você solicitou a recuperação de senha.</p>"
                 + "<p>Sua nova senha de acesso é: <strong style=\"font-size: 20px;\">" + novaSenha + "</strong></p>"
-                + "<p>Recomendamos que você altere sua senha clicando <a href=\"" + frontendUrl + "/change-password\">aqui</a>.</p>";
+                + "<p>Recomendamos que você altere sua senha clicando <a href=\"" + frontendUrl + "/redefine-password\">aqui</a>.</p>";
 
         emailService.enviarEmail(user.getEmail(), "Recuperação de Senha - Sistema de Certificados", html);
 
