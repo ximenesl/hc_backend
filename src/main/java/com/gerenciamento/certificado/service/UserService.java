@@ -31,6 +31,9 @@ public class UserService {
     private final EmailService emailService;
     private final CertificadoRepository certificadoRepository;
 
+    @org.springframework.beans.factory.annotation.Value("${app.frontend-url}")
+    private String frontendUrl;
+
     public UserService(UserRepository userRepository, CursoRepository cursoRepository, TurmaRepository turmaRepository, PasswordEncoder passwordEncoder, EmailService emailService, CertificadoRepository certificadoRepository) {
         this.userRepository = userRepository;
         this.cursoRepository = cursoRepository;
@@ -98,9 +101,13 @@ public class UserService {
         }
         
         try {
-            String html = "<p>Olá " + user.getNome() + ",</p><p>Sua conta no sistema de certificados foi criada.</p><p>Sua senha provisória de acesso é: <strong>" + rawPassword + "</strong></p><p>Recomendamos que você altere sua senha após o primeiro acesso.</p>";
+            String html = "<p>Olá " + user.getNome() + ",</p>"
+                    + "<p>Sua conta no sistema de certificados foi criada.</p>"
+                    + "<p>Sua senha provisória de acesso é: <strong>" + rawPassword + "</strong></p>"
+                    + "<p>Recomendamos que você altere sua senha clicando <a href=\"" + frontendUrl + "/change-password\">aqui</a>.</p>";
             emailService.enviarEmail(user.getEmail(), "Sua conta foi criada - Sistema de Certificados", html);
         } catch (Exception e) {
+
             System.err.println("Erro ao enviar email: " + e.getMessage());
             // We don't rethrow to allow the user creation to succeed even if email fails (Resend limit/test mode)
         }

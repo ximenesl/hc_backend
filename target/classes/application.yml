@@ -26,6 +26,8 @@ app:
     expirationMs: 86400000 # 24 horas
   file:
     upload-dir: temp/uploads
+  frontend-url: ${FRONTEND_URL:http://localhost:3000}
+
 
 resend:
   # Tenta buscar a variável de ambiente (Render), se não achar, usa a chave fornecida para rodar localmente
