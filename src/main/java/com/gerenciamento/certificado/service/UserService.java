@@ -10,6 +10,8 @@ import com.gerenciamento.certificado.entity.User;
 import com.gerenciamento.certificado.repository.CursoRepository;
 import com.gerenciamento.certificado.repository.TurmaRepository;
 import com.gerenciamento.certificado.repository.UserRepository;
+import com.gerenciamento.certificado.repository.CertificadoRepository;
+
 import com.gerenciamento.certificado.dto.TurmaResponse;
 import com.gerenciamento.certificado.exception.ResourceNotFoundException;
 import org.springframework.security.core.Authentication;
@@ -27,13 +29,15 @@ public class UserService {
     private final TurmaRepository turmaRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
+    private final CertificadoRepository certificadoRepository;
 
-    public UserService(UserRepository userRepository, CursoRepository cursoRepository, TurmaRepository turmaRepository, PasswordEncoder passwordEncoder, EmailService emailService) {
+    public UserService(UserRepository userRepository, CursoRepository cursoRepository, TurmaRepository turmaRepository, PasswordEncoder passwordEncoder, EmailService emailService, CertificadoRepository certificadoRepository) {
         this.userRepository = userRepository;
         this.cursoRepository = cursoRepository;
         this.turmaRepository = turmaRepository;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
+        this.certificadoRepository = certificadoRepository;
     }
 
     private String generateRandomPassword() {
@@ -214,6 +218,11 @@ public class UserService {
         if (user.getTurma() != null) {
             turmaDto = new TurmaResponse(user.getTurma());
         }
+        Integer horas = 0;
+        if (user.getRole() == Role.ALUNO) {
+            horas = certificadoRepository.sumHorasAprovadasByAlunoId(user.getId());
+        }
+
         return UserResponse.builder()
                 .id(user.getId())
                 .nome(user.getNome())
@@ -221,6 +230,7 @@ public class UserService {
                 .role(user.getRole())
                 .cursos(cursosDto)
                 .turma(turmaDto)
+                .horasAprovadas(horas)
                 .build();
     }
 }

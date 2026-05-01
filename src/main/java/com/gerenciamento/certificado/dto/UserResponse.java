@@ -9,16 +9,19 @@ public class UserResponse {
     private Role role;
     private java.util.List<CursoResponse> cursos;
     private TurmaResponse turma;
+    private Integer horasAprovadas;
+
 
     public UserResponse() {}
 
-    public UserResponse(Long id, String nome, String email, Role role, java.util.List<CursoResponse> cursos, TurmaResponse turma) {
+    public UserResponse(Long id, String nome, String email, Role role, java.util.List<CursoResponse> cursos, TurmaResponse turma, Integer horasAprovadas) {
         this.id = id;
         this.nome = nome;
         this.email = email;
         this.role = role;
         this.cursos = cursos;
         this.turma = turma;
+        this.horasAprovadas = horasAprovadas;
     }
 
     public Long getId() { return id; }
@@ -33,6 +36,9 @@ public class UserResponse {
     public void setCursos(java.util.List<CursoResponse> cursos) { this.cursos = cursos; }
     public TurmaResponse getTurma() { return turma; }
     public void setTurma(TurmaResponse turma) { this.turma = turma; }
+    public Integer getHorasAprovadas() { return horasAprovadas; }
+    public void setHorasAprovadas(Integer horasAprovadas) { this.horasAprovadas = horasAprovadas; }
+
 
     public static UserResponseBuilder builder() { return new UserResponseBuilder(); }
 
@@ -50,9 +56,11 @@ public class UserResponse {
         public UserResponseBuilder role(Role role) { this.role = role; return this; }
         public UserResponseBuilder cursos(java.util.List<CursoResponse> cursos) { this.cursos = cursos; return this; }
         public UserResponseBuilder turma(TurmaResponse turma) { this.turma = turma; return this; }
+        public UserResponseBuilder horasAprovadas(Integer horasAprovadas) { this.horasAprovadas = horasAprovadas; return this; }
+
 
         public UserResponse build() {
-            return new UserResponse(id, nome, email, role, cursos, turma);
+            return new UserResponse(id, nome, email, role, cursos, turma, horasAprovadas);
         }
     }
 }
