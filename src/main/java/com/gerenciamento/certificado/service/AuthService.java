@@ -57,59 +57,39 @@ public class AuthService {
 
     }
 
-    private String generateRecoveryCode() {
-        SecureRandom random = new SecureRandom();
-        int num = random.nextInt(1000000);
-        return String.format("%06d", num);
+    private String generateRandomPassword() {
+        java.security.SecureRandom random = new java.security.SecureRandom();
+        int num = random.nextInt(100000000);
+        return String.format("%08d", num);
     }
 
     public void forgotPassword(ForgotPasswordRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
 
-        String codigo = generateRecoveryCode();
-        user.setCodigoRecuperacao(codigo);
-        user.setCodigoRecuperacaoExpiraEm(LocalDateTime.now().plusMinutes(15));
-
+        String novaSenha = generateRandomPassword();
+        user.setSenha(passwordEncoder.encode(novaSenha));
+        
         userRepository.save(user);
 
         String html = "<p>Olá " + user.getNome() + ",</p>"
                 + "<p>Você solicitou a recuperação de senha.</p>"
-                + "<p>Seu código de verificação é: <strong style=\"font-size: 24px;\">" + codigo + "</strong></p>"
-                + "<p>Este código é válido por 15 minutos.</p>";
+                + "<p>Sua nova senha de acesso é: <strong style=\"font-size: 20px;\">" + novaSenha + "</strong></p>"
+                + "<p>Recomendamos que você altere sua senha após o acesso.</p>";
 
-        emailService.enviarEmail(user.getEmail(), "Código de Recuperação de Senha - Sistema de Certificados", html);
+        emailService.enviarEmail(user.getEmail(), "Recuperação de Senha - Sistema de Certificados", html);
     }
 
-    public void verifyCode(com.gerenciamento.certificado.dto.VerifyCodeRequest request) {
+    public void changePassword(com.gerenciamento.certificado.dto.ChangePasswordRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
 
-        if (user.getCodigoRecuperacao() == null || !user.getCodigoRecuperacao().equals(request.getCodigo())) {
-            throw new IllegalArgumentException("Código de recuperação inválido.");
+        if (!passwordEncoder.matches(request.getSenhaAntiga(), user.getSenha())) {
+            throw new IllegalArgumentException("Senha antiga incorreta.");
         }
 
-        if (user.getCodigoRecuperacaoExpiraEm() == null || user.getCodigoRecuperacaoExpiraEm().isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("Código de recuperação expirado.");
-        }
-    }
-
-    public void resetPassword(ResetPasswordRequest request) {
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
-
-        if (user.getCodigoRecuperacao() == null || !user.getCodigoRecuperacao().equals(request.getCodigo())) {
-            throw new IllegalArgumentException("Código de recuperação inválido.");
-        }
-
-        if (user.getCodigoRecuperacaoExpiraEm() == null || user.getCodigoRecuperacaoExpiraEm().isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("Código de recuperação expirado.");
-        }
-
-        user.setSenha(passwordEncoder.encode(request.getNovaSenha()));
-        user.setCodigoRecuperacao(null);
-        user.setCodigoRecuperacaoExpiraEm(null);
-
+        user.setSenha(passwordEncoder.encode(request.getSenhaNova()));
         userRepository.save(user);
     }
 }
+

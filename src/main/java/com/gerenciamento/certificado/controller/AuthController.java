@@ -27,23 +27,17 @@ public class AuthController {
     }
 
     @PostMapping("/forgot-password")
-    @Operation(summary = "Solicitar recuperação de senha", description = "Envia um código de 6 dígitos para o email do usuário")
+    @Operation(summary = "Solicitar recuperação de senha", description = "Gera uma nova senha aleatória e envia para o email do usuário")
     public ResponseEntity<Void> forgotPassword(@Valid @RequestBody com.gerenciamento.certificado.dto.ForgotPasswordRequest request) {
         authService.forgotPassword(request);
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/verify-code")
-    @Operation(summary = "Verificar código de recuperação", description = "Valida se o código de 6 dígitos informado é válido para o email")
-    public ResponseEntity<Void> verifyCode(@Valid @RequestBody com.gerenciamento.certificado.dto.VerifyCodeRequest request) {
-        authService.verifyCode(request);
-        return ResponseEntity.ok().build();
-    }
-
-    @PostMapping("/reset-password")
-    @Operation(summary = "Redefinir senha", description = "Valida o código de 6 dígitos e redefine a senha do usuário")
-    public ResponseEntity<Void> resetPassword(@Valid @RequestBody com.gerenciamento.certificado.dto.ResetPasswordRequest request) {
-        authService.resetPassword(request);
+    @PostMapping("/change-password")
+    @Operation(summary = "Alterar senha (usuário logado)", description = "Altera a senha do usuário validando a senha antiga")
+    public ResponseEntity<Void> changePassword(@Valid @RequestBody com.gerenciamento.certificado.dto.ChangePasswordRequest request) {
+        authService.changePassword(request);
         return ResponseEntity.ok().build();
     }
 }
+
