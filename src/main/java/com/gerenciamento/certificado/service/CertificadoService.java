@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@org.springframework.transaction.annotation.Transactional(readOnly = true)
 public class CertificadoService {
 
     private final CertificadoRepository certificadoRepository;
@@ -30,6 +31,7 @@ public class CertificadoService {
         this.regraRepository = regraRepository;
     }
 
+    @org.springframework.transaction.annotation.Transactional
     public CertificadoResponse uploadCertificado(Long alunoId, String nome, Integer cargaHoraria, LocalDate dataEmissao, MultipartFile arquivo, Long regraId) {
         User aluno = userRepository.findById(alunoId)
                 .orElseThrow(() -> new ResourceNotFoundException("Aluno não encontrado"));
@@ -97,6 +99,7 @@ public class CertificadoService {
                 .collect(Collectors.toList());
     }
 
+    @org.springframework.transaction.annotation.Transactional
     public CertificadoResponse atualizarStatus(Long id, CertificadoStatusUpdate request) {
         Certificado certificado = certificadoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Certificado não encontrado"));

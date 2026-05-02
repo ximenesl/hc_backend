@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 
 @Service
+@org.springframework.transaction.annotation.Transactional(readOnly = true)
 public class AuthService {
 
     private final AuthenticationManager authenticationManager;
@@ -64,6 +65,7 @@ public class AuthService {
         return String.format("%08d", num);
     }
 
+    @org.springframework.transaction.annotation.Transactional
     public void forgotPassword(ForgotPasswordRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
@@ -82,6 +84,7 @@ public class AuthService {
 
     }
 
+    @org.springframework.transaction.annotation.Transactional
     public void changePassword(com.gerenciamento.certificado.dto.ChangePasswordRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));

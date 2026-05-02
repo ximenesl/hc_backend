@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@org.springframework.transaction.annotation.Transactional(readOnly = true)
 public class UserService {
 
     private final UserRepository userRepository;
@@ -49,6 +50,7 @@ public class UserService {
         return String.format("%08d", num);
     }
 
+    @org.springframework.transaction.annotation.Transactional
     public UserResponse createUser(UserRequest request, Authentication authentication) {
         if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_COORDENADOR"))
                 && authentication.getAuthorities().stream().noneMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
@@ -149,6 +151,7 @@ public class UserService {
         return mapToResponse(user);
     }
 
+    @org.springframework.transaction.annotation.Transactional
     public UserResponse updateUser(Long id, UserRequest request, Authentication authentication) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
@@ -210,6 +213,7 @@ public class UserService {
         return mapToResponse(user);
     }
 
+    @org.springframework.transaction.annotation.Transactional
     public void deleteUser(Long id, Authentication authentication) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
