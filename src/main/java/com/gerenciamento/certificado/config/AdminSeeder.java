@@ -46,68 +46,74 @@ public class AdminSeeder implements CommandLineRunner {
                     .role(Role.ADMIN)
                     .build();
             userRepository.save(admin);
-            System.out.println("Usuário ADMIN criado!");
         }
 
         // 2. CURSOS
         Curso ads = getOrCreateCurso("Análise e Desenvolvimento de Sistemas (ADS)", 100);
-        Curso engCivil = getOrCreateCurso("Engenharia Civil", 120);
-        Curso direito = getOrCreateCurso("Direito", 150);
-
+        
         // 3. REGRAS (Categorias)
         Regra regraAds = getOrCreateRegra(ads, "Palestras e Eventos");
-        Regra regraEng = getOrCreateRegra(engCivil, "Visitas Técnicas");
-        Regra regraDir = getOrCreateRegra(direito, "Estágio Curricular");
-
+        
         // 4. TURMAS
         Turma turmaAds = getOrCreateTurma("ADS - 2024.1", ads);
-        Turma turmaEng = getOrCreateTurma("CIVIL - 2024.1", engCivil);
-        Turma turmaDir = getOrCreateTurma("DIREITO - 2024.1", direito);
 
-        // 5. COORDENADORES
-        User coordJoelson = getOrCreateUser("Joelson Santos", "joelson@teste.com", "coord123", Role.COORDENADOR, Set.of(ads, engCivil), null);
-        User coordMaria = getOrCreateUser("Maria Ferreira", "maria@teste.com", "coord123", Role.COORDENADOR, Set.of(direito), null);
+        // 5. PDF de teste (Mínimo válido)
+        byte[] fakePdf = ("%PDF-1.4\n" +
+                "1 0 obj <</Type/Catalog/Pages 2 0 R>> endobj\n" +
+                "2 0 obj <</Type/Pages/Kids[3 0 R]/Count 1>> endobj\n" +
+                "3 0 obj <</Type/Page/Parent 2 0 R/MediaBox[0 0 612 792]/Contents 4 0 R>> endobj\n" +
+                "4 0 obj <</Length 44>> stream\n" +
+                "BT /F1 24 Tf 100 700 Td (Certificado de Teste) Tj ET\n" +
+                "endstream endobj\n" +
+                "xref\n" +
+                "0 5\n" +
+                "0000000000 65535 f\n" +
+                "0000000009 00000 n\n" +
+                "0000000058 00000 n\n" +
+                "0000000115 00000 n\n" +
+                "0000000212 00000 n\n" +
+                "trailer <</Size 5/Root 1 0 R>>\n" +
+                "startxref\n" +
+                "310\n" +
+                "%%EOF").getBytes();
 
-        // 6. ALUNOS E CERTIFICADOS
-        byte[] fakePdf = "Conteudo de teste do certificado PDF".getBytes();
+        // 6. Criar certificados para os alunos existentes ou novos
+        List<User> alunos = userRepository.findAll().stream()
+                .filter(u -> u.getRole() == Role.ALUNO)
+                .toList();
 
-        // Alunos para o Joelson (ADS)
-        for (int i = 1; i <= 5; i++) {
-            User aluno = getOrCreateUser("Aluno ADS " + i, "aluno.ads" + i + "@teste.com", "aluno123", Role.ALUNO, null, turmaAds);
-            if (certificadoRepository.findByAlunoId(aluno.getId()).isEmpty()) {
-                Certificado cert = Certificado.builder()
-                        .nome("Certificado Palestra " + i)
-                        .cargaHoraria(10 + i)
-                        .dataEmissao(LocalDate.now().minusDays(i))
-                        .status(StatusCertificado.PENDENTE)
-                        .arquivoDados(fakePdf)
-                        .arquivoTipo("application/pdf")
-                        .aluno(aluno)
-                        .regra(regraAds)
-                        .build();
-                certificadoRepository.save(cert);
+        if (alunos.isEmpty()) {
+            // Se não tem nenhum aluno, cria um só para o teste não ficar vazio
+            User aluno = getOrCreateUser("Aluno Teste", "aluno@teste.com", "aluno123", Role.ALUNO, null, turmaAds);
+            criarCertificadoSeNaoExistir(aluno, regraAds, fakePdf, "Certificado Inicial");
+        } else {
+            // Adiciona certificados para os alunos que já existem (limite de 5 para o teste)
+            int count = 0;
+            for (User aluno : alunos) {
+                if (count >= 5) break;
+                criarCertificadoSeNaoExistir(aluno, regraAds, fakePdf, "Certificado de " + aluno.getNome());
+                count++;
             }
         }
 
-        // Alunos para a Maria (Direito)
-        for (int i = 1; i <= 5; i++) {
-            User aluno = getOrCreateUser("Aluno Direito " + i, "aluno.direito" + i + "@teste.com", "aluno123", Role.ALUNO, null, turmaDir);
-            if (certificadoRepository.findByAlunoId(aluno.getId()).isEmpty()) {
-                Certificado cert = Certificado.builder()
-                        .nome("Certificado Estágio " + i)
-                        .cargaHoraria(20 + i)
-                        .dataEmissao(LocalDate.now().minusDays(i))
-                        .status(StatusCertificado.PENDENTE)
-                        .arquivoDados(fakePdf)
-                        .arquivoTipo("application/pdf")
-                        .aluno(aluno)
-                        .regra(regraDir)
-                        .build();
-                certificadoRepository.save(cert);
-            }
+        System.out.println("Seeder finalizado!");
+    }
+
+    private void criarCertificadoSeNaoExistir(User aluno, Regra regra, byte[] arquivo, String nome) {
+        if (certificadoRepository.findByAlunoId(aluno.getId()).isEmpty()) {
+            Certificado cert = Certificado.builder()
+                    .nome(nome)
+                    .cargaHoraria(20)
+                    .dataEmissao(LocalDate.now())
+                    .status(StatusCertificado.PENDENTE)
+                    .arquivoDados(arquivo)
+                    .arquivoTipo("application/pdf")
+                    .aluno(aluno)
+                    .regra(regra)
+                    .build();
+            certificadoRepository.save(cert);
+            System.out.println("Certificado criado para: " + aluno.getNome());
         }
-        
-        System.out.println("Seeder finalizado com sucesso!");
     }
 
     private Curso getOrCreateCurso(String nome, Integer horas) {
