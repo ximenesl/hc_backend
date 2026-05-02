@@ -81,4 +81,11 @@ public class CertificadoController {
     public ResponseEntity<org.springframework.core.io.Resource> getCertificadoFile(@PathVariable Long id) {
         return certificadoService.getFileAsResource(id);
     }
+    @PostMapping("/reset-tests")
+    @PreAuthorize("hasAnyRole('ADMIN', 'COORDENADOR')")
+    @Operation(summary = "Resetar status dos certificados", description = "Volta todos os certificados para PENDENTE para fins de teste")
+    public ResponseEntity<Void> resetTests() {
+        certificadoService.resetTodosParaPendente();
+        return ResponseEntity.ok().build();
+    }
 }

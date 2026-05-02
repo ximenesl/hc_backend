@@ -78,10 +78,25 @@ public class AdminSeeder implements CommandLineRunner {
                 "310\n" +
                 "%%EOF").getBytes();
 
-        // 6. Criar um aluno de teste se não houver nenhum
-        if (userRepository.findAll().stream().noneMatch(u -> u.getRole() == Role.ALUNO)) {
-            User aluno = getOrCreateUser("Aluno Teste", "aluno@teste.com", "aluno123", Role.ALUNO, null, turmaAds);
-            criarCertificadoSeNaoExistir(aluno, regraAds, fakePdf, "Certificado Inicial");
+        // 6. Criar certificados para os alunos (8 certificados para 8 alunos)
+        List<User> alunos = userRepository.findAll().stream()
+                .filter(u -> u.getRole() == Role.ALUNO)
+                .toList();
+
+        if (alunos.isEmpty()) {
+            // Se não tem nenhum aluno, cria alguns para o teste
+            for (int i = 1; i <= 8; i++) {
+                User aluno = getOrCreateUser("Aluno Teste " + i, "aluno" + i + "@teste.com", "aluno123", Role.ALUNO, null, turmaAds);
+                criarCertificadoSeNaoExistir(aluno, regraAds, fakePdf, "Certificado de Aluno " + i);
+            }
+        } else {
+            // Adiciona certificados para os alunos que já existem (limite de 8)
+            int count = 0;
+            for (User aluno : alunos) {
+                if (count >= 8) break;
+                criarCertificadoSeNaoExistir(aluno, regraAds, fakePdf, "Certificado de " + aluno.getNome());
+                count++;
+            }
         }
 
         System.out.println("Seeder finalizado com sucesso!");

@@ -156,4 +156,15 @@ public class CertificadoService {
                 .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"certificado_" + id + "\"")
                 .body(resource);
     }
+
+    @org.springframework.transaction.annotation.Transactional
+    public void resetTodosParaPendente() {
+        List<Certificado> todos = certificadoRepository.findAll();
+        for (Certificado c : todos) {
+            c.setStatus(StatusCertificado.PENDENTE);
+            c.setJustificativa(null);
+            c.setHorasValidadas(null);
+        }
+        certificadoRepository.saveAll(todos);
+    }
 }
