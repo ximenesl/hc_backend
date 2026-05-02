@@ -76,7 +76,6 @@ public class CertificadoController {
     }
 
     @GetMapping("/{id}/file")
-    @PreAuthorize("hasAnyRole('ALUNO', 'COORDENADOR', 'ADMIN')")
     @Operation(summary = "Baixar/Visualizar arquivo do certificado", description = "Retorna o arquivo do certificado")
     public ResponseEntity<org.springframework.core.io.Resource> getCertificadoFile(@PathVariable Long id) {
         return certificadoService.getFileAsResource(id);
