@@ -36,6 +36,7 @@ public class AdminSeeder implements CommandLineRunner {
     }
 
     @Override
+    @org.springframework.transaction.annotation.Transactional
     public void run(String... args) throws Exception {
         try {
             // 1. ADMIN

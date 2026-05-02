@@ -24,8 +24,6 @@ public class Certificado {
     @Column(nullable = false)
     private StatusCertificado status;
 
-    @Lob
-    @Basic(fetch = FetchType.LAZY)
     @Column(name = "arquivo_dados", nullable = false)
     private byte[] arquivoDados;
 
