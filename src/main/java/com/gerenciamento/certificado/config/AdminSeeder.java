@@ -49,54 +49,61 @@ public class AdminSeeder implements CommandLineRunner {
             userRepository.save(admin);
         }
 
-        // 2. CURSOS
-        Curso ads = getOrCreateCurso("Análise e Desenvolvimento de Sistemas (ADS)", 100);
-        
-        // 3. REGRAS (Categorias)
-        Regra regraAds = getOrCreateRegra(ads, "Palestras e Eventos");
-        
-        // 4. TURMAS
-        Turma turmaAds = getOrCreateTurma("ADS - 2024.1", ads);
+        // 2. Criar Cursos
+        Curso cursoAds = getOrCreateCurso("Análise e Desenvolvimento de Sistemas", 2000, "ADS", "Tecnologia");
+        Curso cursoJogos = getOrCreateCurso("Jogos Digitais", 1800, "JOG", "Tecnologia");
 
-        // 5. PDF de teste (Mínimo válido)
+        // 3. Criar Coordenador (Joelson)
+        User coordenadorJoelson = getOrCreateUser("Joelson Jose", "joelsonjose222@gmail.com", "joelson123", Role.COORDENADOR, Set.of(cursoAds), null);
+        // Garantir que ele também coordene o curso de jogos
+        if (!coordenadorJoelson.getCursos().contains(cursoJogos)) {
+            coordenadorJoelson.getCursos().add(cursoJogos);
+            userRepository.save(coordenadorJoelson);
+        }
+
+        // 4. Criar Regras
+        Regra regraAds = getOrCreateRegra(cursoAds, "Certificado de Curso Extra", 20, "Atividade Complementar", "Participação em eventos", 100);
+        Regra regraJogos = getOrCreateRegra(cursoJogos, "Certificado de Workshop", 15, "Atividade Complementar", "Workshop de Unity", 100);
+
+        // 5. Criar Turmas
+        Turma turmaAds = getOrCreateTurma("ADS-2024-1", cursoAds);
+        Turma turmaJogos = getOrCreateTurma("JOG-2024-1", cursoJogos);
+
+        // 6. Gerar um PDF de teste um pouco mais "realista"
         byte[] fakePdf = ("%PDF-1.4\n" +
                 "1 0 obj <</Type/Catalog/Pages 2 0 R>> endobj\n" +
                 "2 0 obj <</Type/Pages/Kids[3 0 R]/Count 1>> endobj\n" +
                 "3 0 obj <</Type/Page/Parent 2 0 R/MediaBox[0 0 612 792]/Contents 4 0 R>> endobj\n" +
-                "4 0 obj <</Length 44>> stream\n" +
-                "BT /F1 24 Tf 100 700 Td (Certificado de Teste) Tj ET\n" +
+                "4 0 obj <</Length 150>> stream\n" +
+                "BT /F1 24 Tf 100 700 Td (CERTIFICADO DE CONCLUSAO) Tj\n" +
+                "/F1 14 Tf 0 -50 Td (Certificamos que o aluno participou com exito) Tj\n" +
+                "0 -20 Td (das atividades academicas complementares.) Tj\n" +
+                "0 -40 Td (Data: 02/05/2026) Tj ET\n" +
                 "endstream endobj\n" +
                 "xref\n" +
                 "0 5\n" +
                 "0000000000 65535 f\n" +
                 "0000000009 00000 n\n" +
-                "0000000058 00000 n\n" +
-                "0000000115 00000 n\n" +
+                "0000000056 00000 n\n" +
+                "0000000111 00000 n\n" +
                 "0000000212 00000 n\n" +
                 "trailer <</Size 5/Root 1 0 R>>\n" +
                 "startxref\n" +
-                "310\n" +
+                "412\n" +
                 "%%EOF").getBytes();
 
-        // 6. Criar certificados para os alunos (8 certificados para 8 alunos)
-        List<User> alunos = userRepository.findAll().stream()
-                .filter(u -> u.getRole() == Role.ALUNO)
-                .toList();
+        // 7. Criar Alunos com nomes reais
+        String[] nomesAds = {"Maria Oliveira", "Carlos Souza", "Ana Costa", "Pedro Silva", "Julia Lima"};
+        String[] nomesJogos = {"Lucas Ferreira", "Beatriz Rocha", "Roberto Almeida", "Carla Mendes", "Gabriel Santos"};
 
-        if (alunos.isEmpty()) {
-            // Se não tem nenhum aluno, cria alguns para o teste
-            for (int i = 1; i <= 8; i++) {
-                User aluno = getOrCreateUser("Aluno Teste " + i, "aluno" + i + "@teste.com", "aluno123", Role.ALUNO, null, turmaAds);
-                criarCertificadoSeNaoExistir(aluno, regraAds, fakePdf, "Certificado de Aluno " + i);
-            }
-        } else {
-            // Adiciona certificados para os alunos que já existem (limite de 8)
-            int count = 0;
-            for (User aluno : alunos) {
-                if (count >= 8) break;
-                criarCertificadoSeNaoExistir(aluno, regraAds, fakePdf, "Certificado de " + aluno.getNome());
-                count++;
-            }
+        for (int i = 0; i < nomesAds.length; i++) {
+            User aluno = getOrCreateUser(nomesAds[i], "aluno.ads" + i + "@teste.com", "aluno123", Role.ALUNO, Set.of(cursoAds), turmaAds);
+            criarCertificadoSeNaoExistir(aluno, regraAds, fakePdf, "Certificado ADS - " + nomesAds[i]);
+        }
+
+        for (int i = 0; i < nomesJogos.length; i++) {
+            User aluno = getOrCreateUser(nomesJogos[i], "aluno.jogos" + i + "@teste.com", "aluno123", Role.ALUNO, Set.of(cursoJogos), turmaJogos);
+            criarCertificadoSeNaoExistir(aluno, regraJogos, fakePdf, "Certificado Jogos - " + nomesJogos[i]);
         }
 
         System.out.println("Seeder finalizado com sucesso!");
@@ -119,25 +126,25 @@ public class AdminSeeder implements CommandLineRunner {
         }
     }
 
-    private Curso getOrCreateCurso(String nome, Integer horas) {
+    private Curso getOrCreateCurso(String nome, Integer horas, String sigla, String categoria) {
         return cursoRepository.findAll().stream()
                 .filter(c -> c.getNome().equals(nome))
                 .findFirst()
-                .orElseGet(() -> cursoRepository.save(new Curso(null, nome, horas)));
+                .orElseGet(() -> cursoRepository.save(new Curso(null, nome, horas, sigla, categoria)));
     }
 
-    private Regra getOrCreateRegra(Curso curso, String descricao) {
+    private Regra getOrCreateRegra(Curso curso, String nome, Integer horas, String grupo, String requisito, Integer aproveitamento) {
         return regraRepository.findByCursoId(curso.getId()).stream()
-                .filter(r -> r.getDescricao().equals(descricao))
+                .filter(r -> r.getDescricao().equals(nome))
                 .findFirst()
                 .orElseGet(() -> {
                     Regra r = new Regra();
                     r.setCurso(curso);
                     r.setTipo("Extensão");
-                    r.setGrupo("Grupo Geral");
-                    r.setDescricao(descricao);
-                    r.setAproveitamento("100%");
-                    r.setRequisito("Certificado de participação");
+                    r.setGrupo(grupo);
+                    r.setDescricao(nome);
+                    r.setAproveitamento(aproveitamento + "%");
+                    r.setRequisito(requisito);
                     return regraRepository.save(r);
                 });
     }

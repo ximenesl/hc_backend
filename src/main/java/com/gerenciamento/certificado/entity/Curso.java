@@ -36,10 +36,12 @@ public class Curso {
 
     public Curso() {}
 
-    public Curso(Long id, String nome, Integer horasTotais) {
+    public Curso(Long id, String nome, Integer horasTotais, String sigla, String categoria) {
         this.id = id;
         this.nome = nome;
         this.horasTotais = horasTotais;
+        this.sigla = sigla;
+        this.categoria = categoria;
     }
 
     public Long getId() { return id; }
