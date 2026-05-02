@@ -138,6 +138,8 @@ public class CertificadoService {
                 .horasValidadas(c.getHorasValidadas())
                 .regraId(c.getRegra() != null ? c.getRegra().getId() : null)
                 .regraDescricao(c.getRegra() != null ? c.getRegra().getDescricao() : null)
+                .cursoId(c.getRegra() != null && c.getRegra().getCurso() != null ? c.getRegra().getCurso().getId() : null)
+                .cursoNome(c.getRegra() != null && c.getRegra().getCurso() != null ? c.getRegra().getCurso().getNome() : null)
                 .build();
     }
 

@@ -15,6 +15,8 @@ public class CertificadoResponse {
     private Integer horasValidadas;
     private Long regraId;
     private String regraDescricao;
+    private Long cursoId;
+    private String cursoNome;
 
     public CertificadoResponse() {}
 
@@ -42,6 +44,10 @@ public class CertificadoResponse {
     public void setRegraId(Long regraId) { this.regraId = regraId; }
     public String getRegraDescricao() { return regraDescricao; }
     public void setRegraDescricao(String regraDescricao) { this.regraDescricao = regraDescricao; }
+    public Long getCursoId() { return cursoId; }
+    public void setCursoId(Long cursoId) { this.cursoId = cursoId; }
+    public String getCursoNome() { return cursoNome; }
+    public void setCursoNome(String cursoNome) { this.cursoNome = cursoNome; }
 
     public static CertificadoResponseBuilder builder() { return new CertificadoResponseBuilder(); }
 
@@ -58,6 +64,8 @@ public class CertificadoResponse {
         private Integer horasValidadas;
         private Long regraId;
         private String regraDescricao;
+        private Long cursoId;
+        private String cursoNome;
 
         public CertificadoResponseBuilder id(Long id) { this.id = id; return this; }
         public CertificadoResponseBuilder nome(String nome) { this.nome = nome; return this; }
@@ -71,6 +79,8 @@ public class CertificadoResponse {
         public CertificadoResponseBuilder horasValidadas(Integer horasValidadas) { this.horasValidadas = horasValidadas; return this; }
         public CertificadoResponseBuilder regraId(Long regraId) { this.regraId = regraId; return this; }
         public CertificadoResponseBuilder regraDescricao(String regraDescricao) { this.regraDescricao = regraDescricao; return this; }
+        public CertificadoResponseBuilder cursoId(Long cursoId) { this.cursoId = cursoId; return this; }
+        public CertificadoResponseBuilder cursoNome(String cursoNome) { this.cursoNome = cursoNome; return this; }
 
         public CertificadoResponse build() {
             CertificadoResponse cr = new CertificadoResponse();
@@ -86,6 +96,8 @@ public class CertificadoResponse {
             cr.setHorasValidadas(horasValidadas);
             cr.setRegraId(regraId);
             cr.setRegraDescricao(regraDescricao);
+            cr.setCursoId(cursoId);
+            cr.setCursoNome(cursoNome);
             return cr;
         }
     }
