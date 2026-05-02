@@ -78,18 +78,19 @@ public class AdminSeeder implements CommandLineRunner {
                 "310\n" +
                 "%%EOF").getBytes();
 
-        // 6. Criar certificados para os alunos (COMENTADO PARA EVITAR ERRO DE SCHEMA NO RENDER)
-        /*
+        // 6. Criar certificados para os alunos (8 certificados para 8 alunos)
         List<User> alunos = userRepository.findAll().stream()
                 .filter(u -> u.getRole() == Role.ALUNO)
                 .toList();
 
         if (alunos.isEmpty()) {
+            // Se não tem nenhum aluno, cria alguns para o teste
             for (int i = 1; i <= 8; i++) {
                 User aluno = getOrCreateUser("Aluno Teste " + i, "aluno" + i + "@teste.com", "aluno123", Role.ALUNO, null, turmaAds);
                 criarCertificadoSeNaoExistir(aluno, regraAds, fakePdf, "Certificado de Aluno " + i);
             }
         } else {
+            // Adiciona certificados para os alunos que já existem (limite de 8)
             int count = 0;
             for (User aluno : alunos) {
                 if (count >= 8) break;
@@ -97,13 +98,11 @@ public class AdminSeeder implements CommandLineRunner {
                 count++;
             }
         }
-        */
 
         System.out.println("Seeder finalizado com sucesso!");
     }
 
     private void criarCertificadoSeNaoExistir(User aluno, Regra regra, byte[] arquivo, String nome) {
-        /*
         if (certificadoRepository.findByAlunoId(aluno.getId()).isEmpty()) {
             Certificado cert = Certificado.builder()
                     .nome(nome)
@@ -118,7 +117,6 @@ public class AdminSeeder implements CommandLineRunner {
             certificadoRepository.save(cert);
             System.out.println("Certificado criado para: " + aluno.getNome());
         }
-        */
     }
 
     private Curso getOrCreateCurso(String nome, Integer horas) {
