@@ -54,8 +54,11 @@ public class AdminSeeder implements CommandLineRunner {
         Curso cursoJogos = getOrCreateCurso("Jogos Digitais", 1800, "JOG", "Tecnologia");
 
         // 3. Criar Coordenador (Joelson)
-        User coordenadorJoelson = getOrCreateUser("Joelson Jose", "joelsonjose222@gmail.com", "joelson123", Role.COORDENADOR, Set.of(cursoAds), null);
+        User coordenadorJoelson = getOrCreateUser("Joelson Jose", "joelsonjose222@gmail.com", "joelson123", Role.COORDENADOR, new HashSet<>(Arrays.asList(cursoAds)), null);
         // Garantir que ele também coordene o curso de jogos
+        if (coordenadorJoelson.getCursos() == null) {
+            coordenadorJoelson.setCursos(new HashSet<>());
+        }
         if (!coordenadorJoelson.getCursos().contains(cursoJogos)) {
             coordenadorJoelson.getCursos().add(cursoJogos);
             userRepository.save(coordenadorJoelson);
@@ -97,12 +100,12 @@ public class AdminSeeder implements CommandLineRunner {
         String[] nomesJogos = {"Lucas Ferreira", "Beatriz Rocha", "Roberto Almeida", "Carla Mendes", "Gabriel Santos"};
 
         for (int i = 0; i < nomesAds.length; i++) {
-            User aluno = getOrCreateUser(nomesAds[i], "aluno.ads" + i + "@teste.com", "aluno123", Role.ALUNO, Set.of(cursoAds), turmaAds);
+            User aluno = getOrCreateUser(nomesAds[i], "aluno.ads" + i + "@teste.com", "aluno123", Role.ALUNO, new HashSet<>(Arrays.asList(cursoAds)), turmaAds);
             criarCertificadoSeNaoExistir(aluno, regraAds, fakePdf, "Certificado ADS - " + nomesAds[i]);
         }
 
         for (int i = 0; i < nomesJogos.length; i++) {
-            User aluno = getOrCreateUser(nomesJogos[i], "aluno.jogos" + i + "@teste.com", "aluno123", Role.ALUNO, Set.of(cursoJogos), turmaJogos);
+            User aluno = getOrCreateUser(nomesJogos[i], "aluno.jogos" + i + "@teste.com", "aluno123", Role.ALUNO, new HashSet<>(Arrays.asList(cursoJogos)), turmaJogos);
             criarCertificadoSeNaoExistir(aluno, regraJogos, fakePdf, "Certificado Jogos - " + nomesJogos[i]);
         }
 
