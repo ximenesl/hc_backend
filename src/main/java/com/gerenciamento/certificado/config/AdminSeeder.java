@@ -38,71 +38,53 @@ public class AdminSeeder implements CommandLineRunner {
     @Override
     @org.springframework.transaction.annotation.Transactional
     public void run(String... args) throws Exception {
-        try {
-            // 1. ADMIN
-            if (!userRepository.existsByEmail("admin@admin.com")) {
-                User admin = User.builder()
-                        .nome("Administrador do Sistema")
-                        .email("admin@admin.com")
-                        .senha(passwordEncoder.encode("admin123"))
-                        .role(Role.ADMIN)
-                        .build();
-                userRepository.save(admin);
-            }
-
-            // 2. CURSOS
-            Curso ads = getOrCreateCurso("Análise e Desenvolvimento de Sistemas (ADS)", 100);
-            
-            // 3. REGRAS (Categorias)
-            Regra regraAds = getOrCreateRegra(ads, "Palestras e Eventos");
-            
-            // 4. TURMAS
-            Turma turmaAds = getOrCreateTurma("ADS - 2024.1", ads);
-
-            // 5. PDF de teste (Mínimo válido)
-            byte[] fakePdf = ("%PDF-1.4\n" +
-                    "1 0 obj <</Type/Catalog/Pages 2 0 R>> endobj\n" +
-                    "2 0 obj <</Type/Pages/Kids[3 0 R]/Count 1>> endobj\n" +
-                    "3 0 obj <</Type/Page/Parent 2 0 R/MediaBox[0 0 612 792]/Contents 4 0 R>> endobj\n" +
-                    "4 0 obj <</Length 44>> stream\n" +
-                    "BT /F1 24 Tf 100 700 Td (Certificado de Teste) Tj ET\n" +
-                    "endstream endobj\n" +
-                    "xref\n" +
-                    "0 5\n" +
-                    "0000000000 65535 f\n" +
-                    "0000000009 00000 n\n" +
-                    "0000000058 00000 n\n" +
-                    "0000000115 00000 n\n" +
-                    "0000000212 00000 n\n" +
-                    "trailer <</Size 5/Root 1 0 R>>\n" +
-                    "startxref\n" +
-                    "310\n" +
-                    "%%EOF").getBytes();
-
-            // 6. Criar certificados para os alunos existentes ou novos
-            List<User> alunos = userRepository.findAll().stream()
-                    .filter(u -> u.getRole() == Role.ALUNO)
-                    .toList();
-
-            if (alunos.isEmpty()) {
-                // Se não tem nenhum aluno, cria um só para o teste não ficar vazio
-                User aluno = getOrCreateUser("Aluno Teste", "aluno@teste.com", "aluno123", Role.ALUNO, null, turmaAds);
-                criarCertificadoSeNaoExistir(aluno, regraAds, fakePdf, "Certificado Inicial");
-            } else {
-                // Adiciona certificados para os alunos que já existem (limite de 5 para o teste)
-                int count = 0;
-                for (User aluno : alunos) {
-                    if (count >= 5) break;
-                    criarCertificadoSeNaoExistir(aluno, regraAds, fakePdf, "Certificado de " + aluno.getNome());
-                    count++;
-                }
-            }
-
-            System.out.println("Seeder finalizado com sucesso!");
-        } catch (Exception e) {
-            System.err.println("ERRO NO SEEDER: " + e.getMessage());
-            e.printStackTrace();
+        // 1. ADMIN
+        if (!userRepository.existsByEmail("admin@admin.com")) {
+            User admin = User.builder()
+                    .nome("Administrador do Sistema")
+                    .email("admin@admin.com")
+                    .senha(passwordEncoder.encode("admin123"))
+                    .role(Role.ADMIN)
+                    .build();
+            userRepository.save(admin);
         }
+
+        // 2. CURSOS
+        Curso ads = getOrCreateCurso("Análise e Desenvolvimento de Sistemas (ADS)", 100);
+        
+        // 3. REGRAS (Categorias)
+        Regra regraAds = getOrCreateRegra(ads, "Palestras e Eventos");
+        
+        // 4. TURMAS
+        Turma turmaAds = getOrCreateTurma("ADS - 2024.1", ads);
+
+        // 5. PDF de teste (Mínimo válido)
+        byte[] fakePdf = ("%PDF-1.4\n" +
+                "1 0 obj <</Type/Catalog/Pages 2 0 R>> endobj\n" +
+                "2 0 obj <</Type/Pages/Kids[3 0 R]/Count 1>> endobj\n" +
+                "3 0 obj <</Type/Page/Parent 2 0 R/MediaBox[0 0 612 792]/Contents 4 0 R>> endobj\n" +
+                "4 0 obj <</Length 44>> stream\n" +
+                "BT /F1 24 Tf 100 700 Td (Certificado de Teste) Tj ET\n" +
+                "endstream endobj\n" +
+                "xref\n" +
+                "0 5\n" +
+                "0000000000 65535 f\n" +
+                "0000000009 00000 n\n" +
+                "0000000058 00000 n\n" +
+                "0000000115 00000 n\n" +
+                "0000000212 00000 n\n" +
+                "trailer <</Size 5/Root 1 0 R>>\n" +
+                "startxref\n" +
+                "310\n" +
+                "%%EOF").getBytes();
+
+        // 6. Criar um aluno de teste se não houver nenhum
+        if (userRepository.findAll().stream().noneMatch(u -> u.getRole() == Role.ALUNO)) {
+            User aluno = getOrCreateUser("Aluno Teste", "aluno@teste.com", "aluno123", Role.ALUNO, null, turmaAds);
+            criarCertificadoSeNaoExistir(aluno, regraAds, fakePdf, "Certificado Inicial");
+        }
+
+        System.out.println("Seeder finalizado com sucesso!");
     }
 
     private void criarCertificadoSeNaoExistir(User aluno, Regra regra, byte[] arquivo, String nome) {
