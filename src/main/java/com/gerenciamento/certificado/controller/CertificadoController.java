@@ -48,8 +48,8 @@ public class CertificadoController {
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'COORDENADOR')")
     @Operation(summary = "Listar todos os certificados", description = "Visão geral para a coordenação")
-    public ResponseEntity<List<CertificadoResponse>> listarGeral() {
-        return ResponseEntity.ok(certificadoService.listarTodos());
+    public ResponseEntity<List<CertificadoResponse>> listarGeral(java.security.Principal principal) {
+        return ResponseEntity.ok(certificadoService.listarTodos(principal.getName()));
     }
 
     @GetMapping("/me/{alunoId}")

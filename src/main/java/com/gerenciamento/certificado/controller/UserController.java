@@ -40,8 +40,8 @@ public class UserController {
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'COORDENADOR')")
     @Operation(summary = "Listar todos os usuários")
-    public ResponseEntity<List<UserResponse>> listUsers() {
-        return ResponseEntity.ok(userService.listUsers());
+    public ResponseEntity<List<UserResponse>> listUsers(Authentication authentication) {
+        return ResponseEntity.ok(userService.listUsers(authentication));
     }
 
     @GetMapping("/me")

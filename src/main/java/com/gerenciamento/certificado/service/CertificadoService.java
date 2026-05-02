@@ -63,10 +63,29 @@ public class CertificadoService {
         return mapToResponse(certificado);
     }
 
-    public List<CertificadoResponse> listarTodos() {
-        return certificadoRepository.findAll().stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+    public List<CertificadoResponse> listarTodos(String userEmail) {
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
+
+        if (user.getRole() == com.gerenciamento.certificado.entity.Role.ADMIN) {
+            return certificadoRepository.findAll().stream()
+                    .map(this::mapToResponse)
+                    .collect(Collectors.toList());
+        } else if (user.getRole() == com.gerenciamento.certificado.entity.Role.COORDENADOR) {
+            java.util.Set<Long> cursoIds = user.getCursos().stream()
+                    .map(com.gerenciamento.certificado.entity.Curso::getId)
+                    .collect(Collectors.toSet());
+            
+            if (cursoIds.isEmpty()) {
+                return java.util.Collections.emptyList();
+            }
+
+            return certificadoRepository.findByAlunoCursosIds(cursoIds).stream()
+                    .map(this::mapToResponse)
+                    .collect(Collectors.toList());
+        }
+        
+        return java.util.Collections.emptyList();
     }
 
     public List<CertificadoResponse> listarPorAluno(Long alunoId) {

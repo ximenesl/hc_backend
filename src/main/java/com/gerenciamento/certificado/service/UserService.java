@@ -115,10 +115,32 @@ public class UserService {
         return mapToResponse(user);
     }
 
-    public List<UserResponse> listUsers() {
-        return userRepository.findAll().stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+    public List<UserResponse> listUsers(Authentication authentication) {
+        String currentUserEmail = authentication.getName();
+        User currentUser = userRepository.findByEmail(currentUserEmail)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário logado não encontrado"));
+
+        if (currentUser.getRole() == Role.ADMIN) {
+            return userRepository.findAll().stream()
+                    .map(this::mapToResponse)
+                    .collect(Collectors.toList());
+        } else if (currentUser.getRole() == Role.COORDENADOR) {
+            java.util.Set<Long> cursoIds = currentUser.getCursos().stream()
+                    .map(Curso::getId)
+                    .collect(Collectors.toSet());
+            
+            // Também incluir cursos onde ele é coordenador oficialmente
+            cursoRepository.findByCoordenador(currentUser).forEach(c -> cursoIds.add(c.getId()));
+
+            return userRepository.findAll().stream()
+                    .filter(u -> u.getRole() == Role.ADMIN || 
+                                 u.getId().equals(currentUser.getId()) ||
+                                 (u.getRole() == Role.ALUNO && u.getCursos().stream().anyMatch(c -> cursoIds.contains(c.getId()))))
+                    .map(this::mapToResponse)
+                    .collect(Collectors.toList());
+        }
+
+        return java.util.Collections.singletonList(mapToResponse(currentUser));
     }
 
     public UserResponse getUserById(Long id) {
