@@ -7,6 +7,8 @@ import com.gerenciamento.certificado.repository.CursoRepository;
 import com.gerenciamento.certificado.repository.TurmaRepository;
 import com.gerenciamento.certificado.repository.UserRepository;
 import com.gerenciamento.certificado.entity.Turma;
+import com.gerenciamento.certificado.entity.Regra;
+import com.gerenciamento.certificado.repository.RegraRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
