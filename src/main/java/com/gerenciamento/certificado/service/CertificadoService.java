@@ -163,9 +163,12 @@ public class CertificadoService {
     public void resetTodosParaPendente() {
         List<Certificado> todos = certificadoRepository.findAll();
         for (Certificado c : todos) {
-            c.setStatus(StatusCertificado.PENDENTE);
-            c.setJustificativa(null);
-            c.setHorasValidadas(null);
+            // Se o aluno estiver inativo, não resetar o certificado
+            if (c.getAluno() != null && Boolean.TRUE.equals(c.getAluno().getAtivo())) {
+                c.setStatus(StatusCertificado.PENDENTE);
+                c.setJustificativa(null);
+                c.setHorasValidadas(null);
+            }
         }
         certificadoRepository.saveAll(todos);
     }

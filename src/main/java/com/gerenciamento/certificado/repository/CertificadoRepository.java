@@ -19,6 +19,10 @@ public interface CertificadoRepository extends JpaRepository<Certificado, Long> 
     @Query("DELETE FROM Certificado c WHERE c.regra.id = :regraId")
     void deleteByRegraId(@Param("regraId") Long regraId);
 
+    long countByRegraId(Long regraId);
+
+    long countByRegraIdAndStatus(Long regraId, com.gerenciamento.certificado.entity.StatusCertificado status);
+
     @Query("SELECT c FROM Certificado c JOIN c.aluno a JOIN a.cursos cur WHERE cur.id IN :cursoIds")
     List<Certificado> findByAlunoCursosIds(@Param("cursoIds") java.util.Set<Long> cursoIds);
 

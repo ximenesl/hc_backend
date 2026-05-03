@@ -64,7 +64,16 @@ public class RegraService {
         if (!regraRepository.existsById(id)) {
             throw new ResourceNotFoundException("Regra não encontrada");
         }
-        certificadoRepository.deleteByRegraId(id);
+        
+        long totalCertificados = certificadoRepository.countByRegraId(id);
+        if (totalCertificados > 0) {
+            long pendentes = certificadoRepository.countByRegraIdAndStatus(id, com.gerenciamento.certificado.entity.StatusCertificado.PENDENTE);
+            if (pendentes > 0) {
+                throw new IllegalArgumentException("Esta regra está vinculada a algum certificado que precisa de validação.");
+            }
+            throw new IllegalArgumentException("Esta regra não pode ser excluída pois possui certificados vinculados. Considere inativá-la.");
+        }
+
         regraRepository.deleteById(id);
         regraRepository.flush();
     }

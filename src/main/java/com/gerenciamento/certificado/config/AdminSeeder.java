@@ -55,19 +55,31 @@ public class AdminSeeder implements CommandLineRunner {
         Curso cursoJogos = getOrCreateCurso("Jogos Digitais", 1800, "JOG", "Graduação");
 
         // 3. Criar Coordenador (Joelson)
-        User coordenadorJoelson = getOrCreateUser("Joelson Jose", "joelsonjose222@gmail.com", "joelson123", Role.COORDENADOR, new HashSet<>(Arrays.asList(cursoAds)), null);
-        // Garantir que ele também coordene o curso de jogos
-        if (coordenadorJoelson.getCursos() == null) {
-            coordenadorJoelson.setCursos(new HashSet<>());
-        }
-        if (!coordenadorJoelson.getCursos().contains(cursoJogos)) {
-            coordenadorJoelson.getCursos().add(cursoJogos);
-            userRepository.save(coordenadorJoelson);
+        User coordenadorJoelson = getOrCreateUser("Joelson Jose", "joelsonjose222@gmail.com", "joelson123", Role.COORDENADOR, new HashSet<>(Arrays.asList(cursoAds, cursoJogos)), null);
+        
+        // Garantir vínculo bidirecional Curso -> Coordenador
+        cursoAds.setCoordenador(coordenadorJoelson);
+        cursoJogos.setCoordenador(coordenadorJoelson);
+        cursoRepository.saveAll(Arrays.asList(cursoAds, cursoJogos));
+
+        // 4. Criar Regras (18 no total: 3 Ensino, 3 Pesquisa, 3 Extensão para cada curso)
+        List<Curso> cursos = Arrays.asList(cursoAds, cursoJogos);
+        String[] tipos = {"Ensino", "Pesquisa", "Extensão"};
+        
+        for (Curso curso : cursos) {
+            for (String tipo : tipos) {
+                for (int i = 1; i <= 3; i++) {
+                    String descricao = "Regra " + tipo + " " + i + " - " + curso.getSigla();
+                    getOrCreateRegra(curso, tipo, descricao, 20, "Grupo " + i, "Atividade " + i, 100);
+                }
+            }
         }
 
-        // 4. Criar Regras
-        Regra regraAds = getOrCreateRegra(cursoAds, "Certificado de Curso Extra", 20, "Atividade Complementar", "Participação em eventos", 100);
-        Regra regraJogos = getOrCreateRegra(cursoJogos, "Certificado de Workshop", 15, "Atividade Complementar", "Workshop de Unity", 100);
+        // Regras específicas para os certificados de teste que serão criados abaixo
+        Regra regraAdsParaCert = regraRepository.findByCursoId(cursoAds.getId()).stream()
+                .filter(r -> r.getTipo().equals("Extensão")).findFirst().get();
+        Regra regraJogosParaCert = regraRepository.findByCursoId(cursoJogos.getId()).stream()
+                .filter(r -> r.getTipo().equals("Extensão")).findFirst().get();
 
         // 5. Criar Turmas
         Turma turmaAds = getOrCreateTurma("ADS-2024-1", cursoAds);
@@ -102,12 +114,12 @@ public class AdminSeeder implements CommandLineRunner {
 
         for (int i = 0; i < nomesAds.length; i++) {
             User aluno = getOrCreateUser(nomesAds[i], "aluno.ads" + i + "@teste.com", "aluno123", Role.ALUNO, new HashSet<>(Arrays.asList(cursoAds)), turmaAds);
-            criarCertificadoSeNaoExistir(aluno, regraAds, fakePdf, "Certificado ADS - " + nomesAds[i]);
+            criarCertificadoSeNaoExistir(aluno, regraAdsParaCert, fakePdf, "Certificado ADS - " + nomesAds[i]);
         }
 
         for (int i = 0; i < nomesJogos.length; i++) {
             User aluno = getOrCreateUser(nomesJogos[i], "aluno.jogos" + i + "@teste.com", "aluno123", Role.ALUNO, new HashSet<>(Arrays.asList(cursoJogos)), turmaJogos);
-            criarCertificadoSeNaoExistir(aluno, regraJogos, fakePdf, "Certificado Jogos - " + nomesJogos[i]);
+            criarCertificadoSeNaoExistir(aluno, regraJogosParaCert, fakePdf, "Certificado Jogos - " + nomesJogos[i]);
         }
 
         System.out.println("Seeder finalizado com sucesso!");
@@ -137,16 +149,16 @@ public class AdminSeeder implements CommandLineRunner {
                 .orElseGet(() -> cursoRepository.save(new Curso(null, nome, horas, sigla, categoria)));
     }
 
-    private Regra getOrCreateRegra(Curso curso, String nome, Integer horas, String grupo, String requisito, Integer aproveitamento) {
+    private Regra getOrCreateRegra(Curso curso, String tipo, String descricao, Integer horas, String grupo, String requisito, Integer aproveitamento) {
         return regraRepository.findByCursoId(curso.getId()).stream()
-                .filter(r -> r.getDescricao().equals(nome))
+                .filter(r -> r.getDescricao().equals(descricao))
                 .findFirst()
                 .orElseGet(() -> {
                     Regra r = new Regra();
                     r.setCurso(curso);
-                    r.setTipo("Extensão");
+                    r.setTipo(tipo);
                     r.setGrupo(grupo);
-                    r.setDescricao(nome);
+                    r.setDescricao(descricao);
                     r.setAproveitamento(aproveitamento + "%");
                     r.setRequisito(requisito);
                     return regraRepository.save(r);
