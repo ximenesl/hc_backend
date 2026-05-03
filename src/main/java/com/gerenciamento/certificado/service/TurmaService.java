@@ -82,6 +82,7 @@ public class TurmaService {
         
         try {
             turmaRepository.delete(turma);
+            turmaRepository.flush();
         } catch (org.springframework.dao.DataIntegrityViolationException e) {
             throw new IllegalArgumentException("Não é possível excluir a turma pois existem alunos ou registros vinculados a ela.");
         }

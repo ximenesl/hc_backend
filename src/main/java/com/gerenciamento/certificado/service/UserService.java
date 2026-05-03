@@ -233,6 +233,7 @@ public class UserService {
         }
         try {
             userRepository.delete(user);
+            userRepository.flush();
         } catch (org.springframework.dao.DataIntegrityViolationException e) {
             throw new IllegalArgumentException("Não é possível excluir o usuário pois existem registros vinculados a ele.");
         }

@@ -63,6 +63,7 @@ public class RegraService {
         }
         try {
             regraRepository.deleteById(id);
+            regraRepository.flush();
         } catch (org.springframework.dao.DataIntegrityViolationException e) {
             throw new IllegalArgumentException("Não é possível excluir a regra pois existem certificados vinculados a ela.");
         }
