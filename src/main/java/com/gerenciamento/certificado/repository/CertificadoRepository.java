@@ -11,6 +11,14 @@ public interface CertificadoRepository extends JpaRepository<Certificado, Long> 
     
     List<Certificado> findByAlunoId(Long alunoId);
 
+    @org.springframework.data.jpa.repository.Modifying
+    @Query("DELETE FROM Certificado c WHERE c.aluno.id = :alunoId")
+    void deleteByAlunoId(@Param("alunoId") Long alunoId);
+
+    @org.springframework.data.jpa.repository.Modifying
+    @Query("DELETE FROM Certificado c WHERE c.regra.id = :regraId")
+    void deleteByRegraId(@Param("regraId") Long regraId);
+
     @Query("SELECT c FROM Certificado c JOIN c.aluno a JOIN a.cursos cur WHERE cur.id IN :cursoIds")
     List<Certificado> findByAlunoCursosIds(@Param("cursoIds") java.util.Set<Long> cursoIds);
 

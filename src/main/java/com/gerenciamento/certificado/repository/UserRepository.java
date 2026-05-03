@@ -11,5 +11,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     long countByCursosIdAndRole(Long cursoId, com.gerenciamento.certificado.entity.Role role);
     java.util.List<User> findByCursosId(Long cursoId);
     long countByTurmaId(Long turmaId);
+    java.util.List<User> findByTurmaId(Long turmaId);
 }
 
