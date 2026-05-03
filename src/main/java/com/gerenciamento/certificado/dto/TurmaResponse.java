@@ -6,6 +6,7 @@ public class TurmaResponse {
     private Long id;
     private String nome;
     private Long cursoId;
+    private Boolean ativo;
 
     public TurmaResponse() {}
 
@@ -13,6 +14,7 @@ public class TurmaResponse {
         this.id = turma.getId();
         this.nome = turma.getNome();
         this.cursoId = turma.getCurso().getId();
+        this.ativo = turma.getAtivo();
     }
 
     public Long getId() { return id; }
@@ -21,4 +23,6 @@ public class TurmaResponse {
     public void setNome(String nome) { this.nome = nome; }
     public Long getCursoId() { return cursoId; }
     public void setCursoId(Long cursoId) { this.cursoId = cursoId; }
+    public Boolean getAtivo() { return ativo; }
+    public void setAtivo(Boolean ativo) { this.ativo = ativo; }
 }

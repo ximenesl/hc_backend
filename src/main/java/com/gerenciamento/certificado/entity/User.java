@@ -47,6 +47,9 @@ public class User implements UserDetails {
     @Column(name = "codigo_recuperacao_expira_em")
     private java.time.LocalDateTime codigoRecuperacaoExpiraEm;
 
+    @Column(nullable = false)
+    private Boolean ativo = true;
+
     public User() {}
 
     public User(Long id, String nome, String email, String senha, Role role, java.util.Set<Curso> cursos, Turma turma) {
@@ -96,6 +99,9 @@ public class User implements UserDetails {
 
     public java.time.LocalDateTime getCodigoRecuperacaoExpiraEm() { return codigoRecuperacaoExpiraEm; }
     public void setCodigoRecuperacaoExpiraEm(java.time.LocalDateTime codigoRecuperacaoExpiraEm) { this.codigoRecuperacaoExpiraEm = codigoRecuperacaoExpiraEm; }
+
+    public Boolean getAtivo() { return ativo; }
+    public void setAtivo(Boolean ativo) { this.ativo = ativo; }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

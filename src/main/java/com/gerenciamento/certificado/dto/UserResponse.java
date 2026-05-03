@@ -10,6 +10,7 @@ public class UserResponse {
     private java.util.List<CursoResponse> cursos;
     private TurmaResponse turma;
     private Integer horasAprovadas;
+    private Boolean ativo;
 
 
     public UserResponse() {}
@@ -22,6 +23,7 @@ public class UserResponse {
         this.cursos = cursos;
         this.turma = turma;
         this.horasAprovadas = horasAprovadas;
+        this.ativo = true; // default, will be overridden by builder if provided
     }
 
     public Long getId() { return id; }
@@ -38,6 +40,8 @@ public class UserResponse {
     public void setTurma(TurmaResponse turma) { this.turma = turma; }
     public Integer getHorasAprovadas() { return horasAprovadas; }
     public void setHorasAprovadas(Integer horasAprovadas) { this.horasAprovadas = horasAprovadas; }
+    public Boolean getAtivo() { return ativo; }
+    public void setAtivo(Boolean ativo) { this.ativo = ativo; }
 
 
     public static UserResponseBuilder builder() { return new UserResponseBuilder(); }
@@ -50,6 +54,7 @@ public class UserResponse {
         private java.util.List<CursoResponse> cursos;
         private TurmaResponse turma;
         private Integer horasAprovadas;
+        private Boolean ativo;
 
 
         public UserResponseBuilder id(Long id) { this.id = id; return this; }
@@ -59,10 +64,13 @@ public class UserResponse {
         public UserResponseBuilder cursos(java.util.List<CursoResponse> cursos) { this.cursos = cursos; return this; }
         public UserResponseBuilder turma(TurmaResponse turma) { this.turma = turma; return this; }
         public UserResponseBuilder horasAprovadas(Integer horasAprovadas) { this.horasAprovadas = horasAprovadas; return this; }
+        public UserResponseBuilder ativo(Boolean ativo) { this.ativo = ativo; return this; }
 
 
         public UserResponse build() {
-            return new UserResponse(id, nome, email, role, cursos, turma, horasAprovadas);
+            UserResponse resp = new UserResponse(id, nome, email, role, cursos, turma, horasAprovadas);
+            resp.setAtivo(this.ativo);
+            return resp;
         }
     }
 }

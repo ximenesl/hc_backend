@@ -29,6 +29,9 @@ public class Regra {
     @Column(nullable = false)
     private String requisito;
 
+    @Column(nullable = false)
+    private Boolean ativo = true;
+
     public Regra() {}
 
     public Long getId() { return id; }
@@ -45,4 +48,6 @@ public class Regra {
     public void setAproveitamento(String aproveitamento) { this.aproveitamento = aproveitamento; }
     public String getRequisito() { return requisito; }
     public void setRequisito(String requisito) { this.requisito = requisito; }
+    public Boolean getAtivo() { return ativo; }
+    public void setAtivo(Boolean ativo) { this.ativo = ativo; }
 }

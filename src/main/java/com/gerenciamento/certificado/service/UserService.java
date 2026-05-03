@@ -231,7 +231,8 @@ public class UserService {
                 cursoRepository.save(c);
             }
         }
-        userRepository.delete(user);
+        user.setAtivo(false);
+        userRepository.save(user);
     }
 
     private UserResponse mapToResponse(User user) {
@@ -263,6 +264,7 @@ public class UserService {
                 .cursos(cursosDto)
                 .turma(turmaDto)
                 .horasAprovadas(horas)
+                .ativo(user.getAtivo())
                 .build();
     }
 }

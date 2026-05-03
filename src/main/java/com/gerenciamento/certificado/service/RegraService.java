@@ -58,10 +58,10 @@ public class RegraService {
     }
 
     public void deleteRegra(Long id) {
-        if (!regraRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Regra não encontrada");
-        }
-        regraRepository.deleteById(id);
+        Regra regra = regraRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Regra não encontrada"));
+        regra.setAtivo(false);
+        regraRepository.save(regra);
     }
 
     public List<RegraResponse> listRegrasPorCurso(Long cursoId) {
@@ -88,7 +88,8 @@ public class RegraService {
                 regra.getGrupo(),
                 regra.getDescricao(),
                 regra.getAproveitamento(),
-                regra.getRequisito()
+                regra.getRequisito(),
+                regra.getAtivo()
         );
     }
 }

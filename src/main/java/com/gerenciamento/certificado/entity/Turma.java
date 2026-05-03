@@ -17,6 +17,9 @@ public class Turma {
     @JoinColumn(name = "curso_id", nullable = false)
     private Curso curso;
 
+    @Column(nullable = false)
+    private Boolean ativo = true;
+
     public Turma() {}
 
     public Turma(Long id, String nome, Curso curso) {
@@ -31,4 +34,6 @@ public class Turma {
     public void setNome(String nome) { this.nome = nome; }
     public Curso getCurso() { return curso; }
     public void setCurso(Curso curso) { this.curso = curso; }
+    public Boolean getAtivo() { return ativo; }
+    public void setAtivo(Boolean ativo) { this.ativo = ativo; }
 }
