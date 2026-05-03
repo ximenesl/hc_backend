@@ -80,7 +80,11 @@ public class TurmaService {
             throw new IllegalArgumentException("Não é possível excluir a turma pois existem alunos vinculados a ela.");
         }
         
-        turmaRepository.delete(turma);
+        try {
+            turmaRepository.delete(turma);
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            throw new IllegalArgumentException("Não é possível excluir a turma pois existem alunos ou registros vinculados a ela.");
+        }
     }
 
     public void inactivateTurma(Long id) {

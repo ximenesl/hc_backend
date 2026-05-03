@@ -61,7 +61,11 @@ public class RegraService {
         if (!regraRepository.existsById(id)) {
             throw new ResourceNotFoundException("Regra não encontrada");
         }
-        regraRepository.deleteById(id);
+        try {
+            regraRepository.deleteById(id);
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            throw new IllegalArgumentException("Não é possível excluir a regra pois existem certificados vinculados a ela.");
+        }
     }
 
     public void inactivateRegra(Long id) {

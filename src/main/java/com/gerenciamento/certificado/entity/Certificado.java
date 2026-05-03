@@ -24,8 +24,9 @@ public class Certificado {
     @Column(nullable = false)
     private StatusCertificado status;
 
+    @Lob
     @org.hibernate.annotations.JdbcTypeCode(java.sql.Types.VARBINARY)
-    @Column(name = "arquivo_dados", nullable = false)
+    @Column(name = "arquivo_dados", nullable = false, length = 10485760)
     private byte[] arquivoDados;
 
 
