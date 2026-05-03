@@ -51,8 +51,8 @@ public class AdminSeeder implements CommandLineRunner {
         }
 
         // 2. Criar Cursos
-        Curso cursoAds = getOrCreateCurso("Análise e Desenvolvimento de Sistemas", 2000, "ADS", "Tecnologia");
-        Curso cursoJogos = getOrCreateCurso("Jogos Digitais", 1800, "JOG", "Tecnologia");
+        Curso cursoAds = getOrCreateCurso("Análise e Desenvolvimento de Sistemas", 2000, "ADS", "Graduação");
+        Curso cursoJogos = getOrCreateCurso("Jogos Digitais", 1800, "JOG", "Graduação");
 
         // 3. Criar Coordenador (Joelson)
         User coordenadorJoelson = getOrCreateUser("Joelson Jose", "joelsonjose222@gmail.com", "joelson123", Role.COORDENADOR, new HashSet<>(Arrays.asList(cursoAds)), null);
