@@ -1,38 +1,44 @@
 package com.gerenciamento.certificado.service;
 
-import com.resend.Resend;
-import com.resend.core.exception.ResendException;
-import com.resend.services.emails.model.CreateEmailOptions;
-import com.resend.services.emails.model.CreateEmailResponse;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 @Service
 public class EmailService {
 
-    @Value("${resend.api-key}")
-    private String resendApiKey;
+    private final JavaMailSender mailSender;
+
+    @Value("${spring.mail.username}")
+    private String emailRemetente;
+
+    public EmailService(JavaMailSender mailSender) {
+        this.mailSender = mailSender;
+    }
 
     public void enviarEmail(String para, String assunto, String conteudoHtml) {
-        if (resendApiKey == null || resendApiKey.isEmpty()) {
-            System.err.println("Chave da API do Resend não configurada. Email não enviado: " + assunto);
-            return;
-        }
-
-        Resend resend = new Resend(resendApiKey);
-
-        CreateEmailOptions sendEmailRequest = CreateEmailOptions.builder()
-                .from("Sistema <onboarding@resend.dev>")
-                .to(para)
-                .subject(assunto)
-                .html(conteudoHtml)
-                .build();
-
         try {
-            CreateEmailResponse data = resend.emails().send(sendEmailRequest);
-            System.out.println("Email enviado com sucesso! ID: " + data.getId());
-        } catch (ResendException e) {
-            System.err.println("Erro ao enviar email: " + e.getMessage());
+            System.out.println("Iniciando tentativa de envio de e-mail via GMAIL para: " + para);
+            
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setFrom(emailRemetente);
+            helper.setTo(para);
+            helper.setSubject(assunto);
+            helper.setText(conteudoHtml, true); // true indica que o conteúdo é HTML
+
+            mailSender.send(message);
+            
+            System.out.println("Email enviado com sucesso para [" + para + "] via Gmail!");
+        } catch (MessagingException e) {
+            System.err.println("ERRO ao enviar para [" + para + "]: " + e.getMessage());
+            e.printStackTrace();
+        } catch (Exception e) {
+            System.err.println("ERRO GENERICO ao enviar e-mail: " + e.getMessage());
             e.printStackTrace();
         }
     }

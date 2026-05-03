@@ -109,9 +109,8 @@ public class UserService {
                     + "<p>Recomendamos que você altere sua senha clicando <a href=\"" + frontendUrl + "/redefine-password\">aqui</a>.</p>";
             emailService.enviarEmail(user.getEmail(), "Sua conta foi criada - Sistema de Certificados", html);
         } catch (Exception e) {
-
-            System.err.println("Erro ao enviar email: " + e.getMessage());
-            // We don't rethrow to allow the user creation to succeed even if email fails (Resend limit/test mode)
+            System.err.println("ALERTA: Usuario criado, mas o e-mail para [" + user.getEmail() + "] falhou: " + e.getMessage());
+            // Nao relancamos a excecao para permitir que a criacao do usuario tenha sucesso mesmo se o email falhar (limite do Resend/modo teste)
         }
 
         return mapToResponse(user);

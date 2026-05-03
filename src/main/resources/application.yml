@@ -30,5 +30,18 @@ app:
 
 
 resend:
-  # Tenta buscar a variável de ambiente (Render), se não achar, usa a chave fornecida para rodar localmente
   api-key: ${RESEND_API_KEY:re_PmGBg8om_7qWdKC97HPjFjofPYabYuMks}
+
+spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${EMAIL_USERNAME:joelsonjose222@gmail.com}
+    password: ${EMAIL_PASSWORD:spoltbdiqacumzzu}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
