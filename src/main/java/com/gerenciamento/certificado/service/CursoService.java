@@ -139,11 +139,6 @@ public class CursoService {
             throw new IllegalArgumentException("Não é possível excluir o curso pois existem regras vinculadas a ele.");
         }
 
-        // Clean up stray foreign key references in the users table directly (if any)
-        // This handles cases where the database schema might have evolved and left orphan columns
-        entityManager.createNativeQuery("UPDATE users SET curso_id = NULL WHERE curso_id = :id")
-                     .setParameter("id", id)
-                     .executeUpdate();
 
         // Clear associations in user_cursos (coordinators, etc)
         // This handles the ManyToMany relationship correctly
