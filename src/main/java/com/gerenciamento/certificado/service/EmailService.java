@@ -19,6 +19,7 @@ public class EmailService {
         this.mailSender = mailSender;
     }
 
+    @org.springframework.scheduling.annotation.Async
     public void enviarEmail(String para, String assunto, String conteudoHtml) {
         try {
             System.out.println("Iniciando tentativa de envio de e-mail via GMAIL para: " + para);
