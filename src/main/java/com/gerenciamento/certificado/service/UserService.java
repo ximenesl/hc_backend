@@ -231,12 +231,9 @@ public class UserService {
                 cursoRepository.save(c);
             }
         }
-        try {
-            userRepository.delete(user);
-            userRepository.flush();
-        } catch (org.springframework.dao.DataIntegrityViolationException e) {
-            throw new IllegalArgumentException("Não é possível excluir o usuário pois existem registros vinculados a ele.");
-        }
+        certificadoRepository.deleteByAlunoId(user.getId());
+        userRepository.delete(user);
+        userRepository.flush();
     }
 
     @org.springframework.transaction.annotation.Transactional

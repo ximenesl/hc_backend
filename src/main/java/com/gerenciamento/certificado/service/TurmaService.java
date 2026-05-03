@@ -18,11 +18,13 @@ public class TurmaService {
     private final TurmaRepository turmaRepository;
     private final CursoRepository cursoRepository;
     private final com.gerenciamento.certificado.repository.UserRepository userRepository;
+    private final com.gerenciamento.certificado.repository.CertificadoRepository certificadoRepository;
 
-    public TurmaService(TurmaRepository turmaRepository, CursoRepository cursoRepository, com.gerenciamento.certificado.repository.UserRepository userRepository) {
+    public TurmaService(TurmaRepository turmaRepository, CursoRepository cursoRepository, com.gerenciamento.certificado.repository.UserRepository userRepository, com.gerenciamento.certificado.repository.CertificadoRepository certificadoRepository) {
         this.turmaRepository = turmaRepository;
         this.cursoRepository = cursoRepository;
         this.userRepository = userRepository;
+        this.certificadoRepository = certificadoRepository;
     }
 
 
@@ -72,20 +74,19 @@ public class TurmaService {
         return new TurmaResponse(updated);
     }
 
+    @org.springframework.transaction.annotation.Transactional
     public void deleteTurma(Long id) {
         Turma turma = turmaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Turma não encontrada com o ID: " + id));
         
-        if (userRepository.countByTurmaId(id) > 0) {
-            throw new IllegalArgumentException("Não é possível excluir a turma pois existem alunos vinculados a ela.");
+        List<com.gerenciamento.certificado.entity.User> alunos = userRepository.findByTurmaId(id);
+        for(com.gerenciamento.certificado.entity.User aluno : alunos) {
+            certificadoRepository.deleteByAlunoId(aluno.getId());
+            userRepository.delete(aluno);
         }
         
-        try {
-            turmaRepository.delete(turma);
-            turmaRepository.flush();
-        } catch (org.springframework.dao.DataIntegrityViolationException e) {
-            throw new IllegalArgumentException("Não é possível excluir a turma pois existem alunos ou registros vinculados a ela.");
-        }
+        turmaRepository.delete(turma);
+        turmaRepository.flush();
     }
 
     public void inactivateTurma(Long id) {

@@ -17,10 +17,12 @@ public class RegraService {
 
     private final RegraRepository regraRepository;
     private final CursoRepository cursoRepository;
+    private final com.gerenciamento.certificado.repository.CertificadoRepository certificadoRepository;
 
-    public RegraService(RegraRepository regraRepository, CursoRepository cursoRepository) {
+    public RegraService(RegraRepository regraRepository, CursoRepository cursoRepository, com.gerenciamento.certificado.repository.CertificadoRepository certificadoRepository) {
         this.regraRepository = regraRepository;
         this.cursoRepository = cursoRepository;
+        this.certificadoRepository = certificadoRepository;
     }
 
     public RegraResponse createRegra(RegraRequest request) {
@@ -57,16 +59,14 @@ public class RegraService {
         return mapToResponse(regra);
     }
 
+    @org.springframework.transaction.annotation.Transactional
     public void deleteRegra(Long id) {
         if (!regraRepository.existsById(id)) {
             throw new ResourceNotFoundException("Regra não encontrada");
         }
-        try {
-            regraRepository.deleteById(id);
-            regraRepository.flush();
-        } catch (org.springframework.dao.DataIntegrityViolationException e) {
-            throw new IllegalArgumentException("Não é possível excluir a regra pois existem certificados vinculados a ela.");
-        }
+        certificadoRepository.deleteByRegraId(id);
+        regraRepository.deleteById(id);
+        regraRepository.flush();
     }
 
     public void inactivateRegra(Long id) {
