@@ -231,6 +231,20 @@ public class UserService {
                 cursoRepository.save(c);
             }
         }
+        userRepository.delete(user);
+    }
+
+    @org.springframework.transaction.annotation.Transactional
+    public void inactivateUser(Long id, Authentication authentication) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
+
+        if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_COORDENADOR"))
+                && authentication.getAuthorities().stream().noneMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            if (user.getRole() != Role.ALUNO) {
+                throw new org.springframework.security.access.AccessDeniedException("Coordenadores só podem inativar usuários do tipo ALUNO.");
+            }
+        }
         user.setAtivo(false);
         userRepository.save(user);
     }

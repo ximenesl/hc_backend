@@ -80,6 +80,13 @@ public class TurmaService {
             throw new IllegalArgumentException("Não é possível excluir a turma pois existem alunos vinculados a ela.");
         }
         
+        turmaRepository.delete(turma);
+    }
+
+    public void inactivateTurma(Long id) {
+        Turma turma = turmaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Turma não encontrada com o ID: " + id));
+        
         turma.setAtivo(false);
         turmaRepository.save(turma);
     }

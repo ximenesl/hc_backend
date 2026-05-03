@@ -59,4 +59,12 @@ public class TurmaController {
         turmaService.deleteTurma(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/{id}/inativar")
+    @PreAuthorize("hasAnyRole('ADMIN', 'COORDENADOR')")
+    @Operation(summary = "Inativar turma")
+    public ResponseEntity<Void> inactivateTurma(@PathVariable Long id) {
+        turmaService.inactivateTurma(id);
+        return ResponseEntity.noContent().build();
+    }
 }

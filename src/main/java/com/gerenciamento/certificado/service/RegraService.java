@@ -58,6 +58,13 @@ public class RegraService {
     }
 
     public void deleteRegra(Long id) {
+        if (!regraRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Regra não encontrada");
+        }
+        regraRepository.deleteById(id);
+    }
+
+    public void inactivateRegra(Long id) {
         Regra regra = regraRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Regra não encontrada"));
         regra.setAtivo(false);

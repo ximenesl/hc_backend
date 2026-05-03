@@ -75,4 +75,12 @@ public class UserController {
         userService.deleteUser(id, authentication);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/{id}/inativar")
+    @PreAuthorize("hasAnyRole('ADMIN', 'COORDENADOR')")
+    @Operation(summary = "Inativar usuário")
+    public ResponseEntity<Void> inactivateUser(@PathVariable Long id, Authentication authentication) {
+        userService.inactivateUser(id, authentication);
+        return ResponseEntity.noContent().build();
+    }
 }

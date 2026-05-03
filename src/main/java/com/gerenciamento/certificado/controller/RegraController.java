@@ -39,6 +39,13 @@ public class RegraController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/{id}/inativar")
+    @PreAuthorize("hasAnyRole('COORDENADOR', 'ADMIN')")
+    public ResponseEntity<Void> inactivateRegra(@PathVariable Long id) {
+        regraService.inactivateRegra(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping
     public ResponseEntity<List<RegraResponse>> listAllRegras() {
         return ResponseEntity.ok(regraService.listAllRegras());
