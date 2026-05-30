@@ -10,6 +10,8 @@ import com.gerenciamento.certificado.repository.UserRepository;
 import com.gerenciamento.certificado.repository.RegraRepository;
 import com.gerenciamento.certificado.entity.Regra;
 import com.gerenciamento.certificado.exception.ResourceNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -65,38 +67,39 @@ public class CertificadoService {
         return mapToResponse(certificado);
     }
 
-    public List<CertificadoResponse> listarTodos(String userEmail) {
+    public Page<CertificadoResponse> listarTodos(String userEmail, Pageable pageable) {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
 
         if (user.getRole() == com.gerenciamento.certificado.entity.Role.ADMIN) {
-            return certificadoRepository.findAll().stream()
-                    .map(this::mapToResponse)
-                    .collect(Collectors.toList());
+            return certificadoRepository.findAll(pageable)
+                    .map(this::mapToResponse);
         } else if (user.getRole() == com.gerenciamento.certificado.entity.Role.COORDENADOR) {
             java.util.Set<Long> cursoIds = user.getCursos().stream()
                     .map(com.gerenciamento.certificado.entity.Curso::getId)
                     .collect(Collectors.toSet());
             
             if (cursoIds.isEmpty()) {
-                return java.util.Collections.emptyList();
+                return Page.empty(pageable);
             }
 
-            return certificadoRepository.findByAlunoCursosIds(cursoIds).stream()
-                    .map(this::mapToResponse)
-                    .collect(Collectors.toList());
+            return certificadoRepository.findByAlunoCursosIds(cursoIds, pageable)
+                    .map(this::mapToResponse);
         }
         
-        return java.util.Collections.emptyList();
+        return Page.empty(pageable);
     }
 
-    public List<CertificadoResponse> listarPorAluno(Long alunoId) {
+    public Page<CertificadoResponse> listarPorAluno(Long alunoId, Long cursoId, Pageable pageable) {
         if (!userRepository.existsById(alunoId)) {
             throw new ResourceNotFoundException("Aluno não encontrado");
         }
-        return certificadoRepository.findByAlunoId(alunoId).stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+        if (cursoId != null) {
+            return certificadoRepository.findByAlunoIdAndRegraCursoId(alunoId, cursoId, pageable)
+                    .map(this::mapToResponse);
+        }
+        return certificadoRepository.findByAlunoId(alunoId, pageable)
+                .map(this::mapToResponse);
     }
 
     @org.springframework.transaction.annotation.Transactional
@@ -132,6 +135,7 @@ public class CertificadoService {
                 .dataEmissao(c.getDataEmissao())
                 .status(c.getStatus().name())
                 .arquivoUrl("/api/certificates/" + c.getId() + "/file") 
+                .arquivoTipo(c.getArquivoTipo())
                 .alunoId(c.getAluno().getId())
                 .alunoNome(c.getAluno().getNome())
                 .justificativa(c.getJustificativa())

@@ -51,8 +51,8 @@ public class AdminSeeder implements CommandLineRunner {
         }
 
         // 2. Criar Cursos
-        Curso cursoAds = getOrCreateCurso("Análise e Desenvolvimento de Sistemas", 2000, "ADS", "Graduação");
-        Curso cursoJogos = getOrCreateCurso("Jogos Digitais", 1800, "JOG", "Graduação");
+        Curso cursoAds = getOrCreateCurso("Análise e Desenvolvimento de Sistemas", 200, "ADS", "Graduação");
+        Curso cursoJogos = getOrCreateCurso("Jogos Digitais", 180, "JOG", "Graduação");
 
         // 3. Criar Coordenador (Joelson)
         User coordenadorJoelson = getOrCreateUser("Joelson Jose", "joelsonjose222@gmail.com", "joelson123", Role.COORDENADOR, new HashSet<>(Arrays.asList(cursoAds, cursoJogos)), null);
@@ -113,7 +113,12 @@ public class AdminSeeder implements CommandLineRunner {
         String[] nomesJogos = {"Lucas Ferreira", "Beatriz Rocha", "Roberto Almeida", "Carla Mendes", "Gabriel Santos"};
 
         for (int i = 0; i < nomesAds.length; i++) {
-            User aluno = getOrCreateUser(nomesAds[i], "aluno.ads" + i + "@teste.com", "aluno123", Role.ALUNO, new HashSet<>(Arrays.asList(cursoAds)), turmaAds);
+            User aluno;
+            if (i == 0) {
+                aluno = getOrCreateUser(nomesAds[i], "aluno.ads" + i + "@teste.com", "aluno123", Role.ALUNO, new java.util.HashSet<>(Arrays.asList(cursoAds, cursoJogos)), turmaAds);
+            } else {
+                aluno = getOrCreateUser(nomesAds[i], "aluno.ads" + i + "@teste.com", "aluno123", Role.ALUNO, new java.util.HashSet<>(Arrays.asList(cursoAds)), turmaAds);
+            }
             criarCertificadoSeNaoExistir(aluno, regraAdsParaCert, fakePdf, "Certificado ADS - " + nomesAds[i]);
         }
 

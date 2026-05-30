@@ -1,6 +1,8 @@
 package com.gerenciamento.certificado.repository;
 
 import com.gerenciamento.certificado.entity.Certificado;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -10,6 +12,10 @@ import java.util.List;
 public interface CertificadoRepository extends JpaRepository<Certificado, Long> {
     
     List<Certificado> findByAlunoId(Long alunoId);
+
+    Page<Certificado> findByAlunoId(Long alunoId, Pageable pageable);
+
+    Page<Certificado> findByAlunoIdAndRegraCursoId(Long alunoId, Long cursoId, Pageable pageable);
 
     @org.springframework.data.jpa.repository.Modifying
     @Query("DELETE FROM Certificado c WHERE c.aluno.id = :alunoId")
@@ -25,6 +31,9 @@ public interface CertificadoRepository extends JpaRepository<Certificado, Long> 
 
     @Query("SELECT c FROM Certificado c JOIN c.aluno a JOIN a.cursos cur WHERE cur.id IN :cursoIds")
     List<Certificado> findByAlunoCursosIds(@Param("cursoIds") java.util.Set<Long> cursoIds);
+
+    @Query("SELECT c FROM Certificado c JOIN c.aluno a JOIN a.cursos cur WHERE cur.id IN :cursoIds")
+    Page<Certificado> findByAlunoCursosIds(@Param("cursoIds") java.util.Set<Long> cursoIds, Pageable pageable);
 
     @Query("SELECT COALESCE(SUM(c.cargaHoraria), 0) FROM Certificado c WHERE c.aluno.id = :alunoId AND c.status = 'APROVADO'")
     Integer sumHorasAprovadasByAlunoId(@Param("alunoId") Long alunoId);

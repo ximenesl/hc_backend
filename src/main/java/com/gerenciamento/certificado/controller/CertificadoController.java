@@ -3,9 +3,14 @@ package com.gerenciamento.certificado.controller;
 import com.gerenciamento.certificado.dto.CertificadoResponse;
 import com.gerenciamento.certificado.dto.CertificadoStatusUpdate;
 import com.gerenciamento.certificado.service.CertificadoService;
+import com.gerenciamento.certificado.service.OcrService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/certificates")
@@ -23,9 +27,11 @@ import java.util.List;
 public class CertificadoController {
 
     private final CertificadoService certificadoService;
+    private final OcrService ocrService;
 
-    public CertificadoController(CertificadoService certificadoService) {
+    public CertificadoController(CertificadoService certificadoService, OcrService ocrService) {
         this.certificadoService = certificadoService;
+        this.ocrService = ocrService;
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -45,18 +51,40 @@ public class CertificadoController {
         );
     }
 
+    @PostMapping(value = "/ocr", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('ALUNO')")
+    @Operation(summary = "Realizar OCR no comprovante", description = "Extrai texto e tenta identificar horas e título")
+    public ResponseEntity<OcrService.OcrResult> analyzeFile(@RequestParam("arquivo") MultipartFile file) {
+        try {
+            byte[] bytes = file.getBytes();
+            String contentType = file.getContentType();
+            return ResponseEntity.ok(ocrService.analyzeFile(bytes, contentType));
+        } catch (java.io.IOException e) {
+            throw new RuntimeException("Erro ao processar arquivo de OCR", e);
+        }
+    }
+
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'COORDENADOR')")
     @Operation(summary = "Listar todos os certificados", description = "Visão geral para a coordenação")
-    public ResponseEntity<List<CertificadoResponse>> listarGeral(java.security.Principal principal) {
-        return ResponseEntity.ok(certificadoService.listarTodos(principal.getName()));
+    public ResponseEntity<Page<CertificadoResponse>> listarGeral(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            java.security.Principal principal) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+        return ResponseEntity.ok(certificadoService.listarTodos(principal.getName(), pageable));
     }
 
     @GetMapping("/me/{alunoId}")
     @PreAuthorize("hasAnyRole('ALUNO', 'COORDENADOR', 'ADMIN')")
     @Operation(summary = "Listar certificados do aluno")
-    public ResponseEntity<List<CertificadoResponse>> listarPorAluno(@PathVariable Long alunoId) {
-        return ResponseEntity.ok(certificadoService.listarPorAluno(alunoId));
+    public ResponseEntity<Page<CertificadoResponse>> listarPorAluno(
+            @PathVariable Long alunoId,
+            @RequestParam(required = false) Long cursoId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+        return ResponseEntity.ok(certificadoService.listarPorAluno(alunoId, cursoId, pageable));
     }
 
     @PutMapping("/{id}/status")
@@ -80,6 +108,7 @@ public class CertificadoController {
     public ResponseEntity<org.springframework.core.io.Resource> getCertificadoFile(@PathVariable Long id) {
         return certificadoService.getFileAsResource(id);
     }
+
     @PostMapping("/reset-tests")
     @PreAuthorize("hasAnyRole('ADMIN', 'COORDENADOR')")
     @Operation(summary = "Resetar status dos certificados", description = "Volta todos os certificados para PENDENTE para fins de teste")

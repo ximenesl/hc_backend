@@ -9,6 +9,7 @@ public class CertificadoResponse {
     private LocalDate dataEmissao;
     private String status;
     private String arquivoUrl;
+    private String arquivoTipo;
     private Long alunoId;
     private String alunoNome;
     private String justificativa;
@@ -32,6 +33,8 @@ public class CertificadoResponse {
     public void setStatus(String status) { this.status = status; }
     public String getArquivoUrl() { return arquivoUrl; }
     public void setArquivoUrl(String arquivoUrl) { this.arquivoUrl = arquivoUrl; }
+    public String getArquivoTipo() { return arquivoTipo; }
+    public void setArquivoTipo(String arquivoTipo) { this.arquivoTipo = arquivoTipo; }
     public Long getAlunoId() { return alunoId; }
     public void setAlunoId(Long alunoId) { this.alunoId = alunoId; }
     public String getAlunoNome() { return alunoNome; }
@@ -58,6 +61,7 @@ public class CertificadoResponse {
         private LocalDate dataEmissao;
         private String status;
         private String arquivoUrl;
+        private String arquivoTipo;
         private Long alunoId;
         private String alunoNome;
         private String justificativa;
@@ -73,6 +77,7 @@ public class CertificadoResponse {
         public CertificadoResponseBuilder dataEmissao(LocalDate dataEmissao) { this.dataEmissao = dataEmissao; return this; }
         public CertificadoResponseBuilder status(String status) { this.status = status; return this; }
         public CertificadoResponseBuilder arquivoUrl(String arquivoUrl) { this.arquivoUrl = arquivoUrl; return this; }
+        public CertificadoResponseBuilder arquivoTipo(String arquivoTipo) { this.arquivoTipo = arquivoTipo; return this; }
         public CertificadoResponseBuilder alunoId(Long alunoId) { this.alunoId = alunoId; return this; }
         public CertificadoResponseBuilder alunoNome(String alunoNome) { this.alunoNome = alunoNome; return this; }
         public CertificadoResponseBuilder justificativa(String justificativa) { this.justificativa = justificativa; return this; }
@@ -90,6 +95,7 @@ public class CertificadoResponse {
             cr.setDataEmissao(dataEmissao);
             cr.setStatus(status);
             cr.setArquivoUrl(arquivoUrl);
+            cr.setArquivoTipo(arquivoTipo);
             cr.setAlunoId(alunoId);
             cr.setAlunoNome(alunoNome);
             cr.setJustificativa(justificativa);
