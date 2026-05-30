@@ -105,20 +105,46 @@ public class OcrService {
         return tesseract.doOCR(image);
     }
 
+    private boolean isOnlyDigits(String str) {
+        if (str == null || str.isEmpty()) {
+            return false;
+        }
+        for (char c : str.toCharArray()) {
+            if (!Character.isDigit(c)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private Integer extractHours(String text) {
         if (text == null || text.isEmpty()) {
             return null;
         }
-        Pattern pattern = Pattern.compile("(?i)(\\d+)\\s*(?:horas|horas\\b|hrs\\b|hs\\b|h\\b)");
-        Matcher matcher = pattern.matcher(text);
-        if (matcher.find()) {
-            try {
-                int val = Integer.parseInt(matcher.group(1));
-                if (val > 0 && val <= 300) {
-                    return val;
+
+        // Converter texto para minúsculas e quebrar em palavras
+        String[] words = text.toLowerCase().split("\\s+");
+
+        for (int i = 0; i < words.length - 1; i++) {
+            String currentWord = words[i];
+            String nextWord = words[i + 1];
+
+            // Se a palavra atual é composta apenas por dígitos
+            if (isOnlyDigits(currentWord)) {
+                // Se a próxima palavra indica a carga horária
+                if (nextWord.equals("horas") || nextWord.equals("hora") || 
+                    nextWord.equals("hrs") || nextWord.equals("hs") || 
+                    nextWord.equals("h")) {
+                    
+                    try {
+                        int val = Integer.parseInt(currentWord);
+                        if (val > 0 && val <= 300) {
+                            return val;
+                        }
+                    } catch (NumberFormatException e) {
+                        // Ignorar e continuar
+                    }
                 }
-            } catch (Exception e) {
-                return null;
             }
         }
         return null;
