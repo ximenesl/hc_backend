@@ -17,6 +17,18 @@ public interface CertificadoRepository extends JpaRepository<Certificado, Long> 
 
     Page<Certificado> findByAlunoIdAndRegraCursoId(Long alunoId, Long cursoId, Pageable pageable);
 
+    @Query("SELECT c FROM Certificado c WHERE c.aluno.id = :alunoId " +
+           "AND (:cursoId IS NULL OR c.regra.curso.id = :cursoId) " +
+           "AND c.status IN :statusList " +
+           "AND LOWER(c.nome) LIKE LOWER(CONCAT('%', :search, '%'))")
+    Page<Certificado> findByFilters(
+        @Param("alunoId") Long alunoId,
+        @Param("cursoId") Long cursoId,
+        @Param("statusList") List<com.gerenciamento.certificado.entity.StatusCertificado> statusList,
+        @Param("search") String search,
+        Pageable pageable
+    );
+
     @org.springframework.data.jpa.repository.Modifying
     @Query("DELETE FROM Certificado c WHERE c.aluno.id = :alunoId")
     void deleteByAlunoId(@Param("alunoId") Long alunoId);

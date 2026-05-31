@@ -90,15 +90,27 @@ public class CertificadoService {
         return Page.empty(pageable);
     }
 
-    public Page<CertificadoResponse> listarPorAluno(Long alunoId, Long cursoId, Pageable pageable) {
+    public Page<CertificadoResponse> listarPorAluno(Long alunoId, Long cursoId, String status, String search, Pageable pageable) {
         if (!userRepository.existsById(alunoId)) {
             throw new ResourceNotFoundException("Aluno não encontrado");
         }
-        if (cursoId != null) {
-            return certificadoRepository.findByAlunoIdAndRegraCursoId(alunoId, cursoId, pageable)
-                    .map(this::mapToResponse);
+
+        List<StatusCertificado> statusList;
+        if (status == null || status.equals("ALL")) {
+            statusList = java.util.Arrays.asList(StatusCertificado.values());
+        } else if (status.equals("APROVADO")) {
+            statusList = java.util.Arrays.asList(StatusCertificado.APROVADO);
+        } else if (status.equals("REJEITADO")) {
+            statusList = java.util.Arrays.asList(StatusCertificado.REJEITADO);
+        } else if (status.equals("PENDENTE")) {
+            statusList = java.util.Arrays.asList(StatusCertificado.PENDENTE);
+        } else {
+            statusList = java.util.Arrays.asList(StatusCertificado.values());
         }
-        return certificadoRepository.findByAlunoId(alunoId, pageable)
+
+        String searchTerm = search != null ? search : "";
+
+        return certificadoRepository.findByFilters(alunoId, cursoId, statusList, searchTerm, pageable)
                 .map(this::mapToResponse);
     }
 

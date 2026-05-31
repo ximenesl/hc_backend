@@ -81,10 +81,12 @@ public class CertificadoController {
     public ResponseEntity<Page<CertificadoResponse>> listarPorAluno(
             @PathVariable Long alunoId,
             @RequestParam(required = false) Long cursoId,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String search,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
-        return ResponseEntity.ok(certificadoService.listarPorAluno(alunoId, cursoId, pageable));
+        return ResponseEntity.ok(certificadoService.listarPorAluno(alunoId, cursoId, status, search, pageable));
     }
 
     @PutMapping("/{id}/status")
