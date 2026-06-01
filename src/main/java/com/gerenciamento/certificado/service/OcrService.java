@@ -122,16 +122,12 @@ public class OcrService {
             return null;
         }
 
-        // Converter texto para minúsculas e quebrar em palavras
         String[] words = text.toLowerCase().split("\\s+");
 
         for (int i = 0; i < words.length - 1; i++) {
             String currentWord = words[i];
             String nextWord = words[i + 1];
-
-            // Se a palavra atual é composta apenas por dígitos
             if (isOnlyDigits(currentWord)) {
-                // Se a próxima palavra indica a carga horária
                 if (nextWord.equals("horas") || nextWord.equals("hora") || 
                     nextWord.equals("hrs") || nextWord.equals("hs") || 
                     nextWord.equals("h")) {
@@ -142,7 +138,6 @@ public class OcrService {
                             return val;
                         }
                     } catch (NumberFormatException e) {
-                        // Ignorar e continuar
                     }
                 }
             }

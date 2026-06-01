@@ -11,3 +11,7 @@ mvnw.cmd
 *.log
 temp/
 uploads/
+
+# Scripts locais de execução
+run-backend.ps1
+run-backend.bat
