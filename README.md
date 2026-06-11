@@ -2,7 +2,7 @@
 
 ---
 
-# 🏥 SENAC HC: Gestao de Horas Complementares
+# SENAC HC: Gestao de Horas Complementares
 
 > Uma plataforma web para gerenciamento e validação de horas complementares de alunos de graduação, conectando discentes, coordenadores e administradores em tempo real. Desenvolvido como Projeto Integrador para o **Curso de Tecnologia em Análise e Desenvolvimento de Sistemas** do **Centro Universitário Senac**.
 
@@ -12,7 +12,7 @@
 
 ---
 
-## 📋 Visão Geral do Projeto
+## Visão Geral do Projeto
 
 O **SENAC HC** é um ecossistema digital projetado para otimizar o fluxo de envio, validação e controle de horas complementares (atividades acadêmico-científico-culturais). A plataforma permite que os alunos enviem certificados digitalizados, escolhendo as categorias adequadas, e acompanhem seu progresso em tempo real em relação à carga horária exigida pelo seu curso. Coordenadores e administradores dispõem de um painel de validação centralizado para avaliar, deferir ou indeferir certificados, inserindo a carga horária final computada.
 
@@ -25,7 +25,7 @@ O **SENAC HC** é um ecossistema digital projetado para otimizar o fluxo de envi
 
 ---
 
-## 🔒 LGPD & Privacidade de Dados (Lei Geral de Proteção de Dados)
+## LGPD & Privacidade de Dados (Lei Geral de Proteção de Dados)
 
 Por processar dados pessoais cadastrais (como nome, registro acadêmico/RA, e-mail e vínculo de curso) e documentos contendo dados de terceiros e dos próprios discentes (certificados), o desenvolvimento do SENAC HC pautou-se pelas diretrizes de privacidade por design, em conformidade com a Lei Federal nº 13.709/2018 (LGPD).
 
@@ -41,7 +41,7 @@ Por processar dados pessoais cadastrais (como nome, registro acadêmico/RA, e-ma
 
 ---
 
-## 🛠️ Tecnologias Utilizadas (Backend)
+## Tecnologias Utilizadas (Backend)
 
 * **Core Backend:** Java 17, Spring Boot 3.2.4 (Spring Web, Spring Security, Validation)
 * **Banco de Dados:** PostgreSQL (produção), H2 Database (desenvolvimento e testes)
@@ -53,7 +53,7 @@ Por processar dados pessoais cadastrais (como nome, registro acadêmico/RA, e-ma
 
 ---
 
-## ⚙️ Configuração e Execução Local (Desenvolvimento)
+## Configuração e Execução Local (Desenvolvimento)
 
 Siga os passos abaixo para configurar e executar o ambiente do backend localmente.
 
@@ -100,7 +100,7 @@ O banco de dados será populado automaticamente pelo `AdminSeeder` com dados de 
 
 ---
 
-## 📊 Endpoints Principais da API
+## Endpoints Principais da API
 
 | Método | Endpoint | Descrição | Escopo / Regra de Acesso |
 |---|---|---|---|
@@ -119,7 +119,7 @@ O banco de dados será populado automaticamente pelo `AdminSeeder` com dados de 
 
 ---
 
-## 📝 Melhorias Futuras
+## Melhorias Futuras
 
 * **Refinamento do OCR com NLP:** Implementação de técnicas de Processamento de Linguagem Natural (NLP) para leitura de entidades avançada e redução de falsos positivos na extração de dados.
 * **Painel de Auditoria e Logs:** Histórico detalhado de ações efetuadas por coordenadores para maior transparência e controle operacional.
@@ -128,7 +128,7 @@ O banco de dados será populado automaticamente pelo `AdminSeeder` com dados de 
 
 ---
 
-## 👥 Autores & Equipe do Projeto
+## Autores & Equipe do Projeto
 
 * **Homero Flávio**
 * **Joelson José**
@@ -138,14 +138,10 @@ O banco de dados será populado automaticamente pelo `AdminSeeder` com dados de 
 * **Nicollas Abrão**
 * **Thayanne Rodrigues**
 
-### Orientadores Acadêmicos
-* **Professor Orientador / Coordenador:** Prof. ____________
-* **Professor de Inglês Técnico:** Prof. Leonardo Trevas
-
 ---
 ---
 
-# 🏥 SENAC HC: Complementary Hours Management
+# SENAC HC: Complementary Hours Management
 
 > A web platform for managing and validating complementary hours for undergraduate students, connecting students, coordinators, and administrators in real-time. Developed as a Capstone Project (*Projeto Integrador*) for the **Systems Analysis and Development Program** at **Senac College**.
 
@@ -155,7 +151,7 @@ O banco de dados será populado automaticamente pelo `AdminSeeder` com dados de 
 
 ---
 
-## 📋 Project Overview
+## Project Overview
 
 **SENAC HC** is a digital ecosystem designed to optimize the workflow of submitting, validating, and monitoring complementary hours (academic, scientific, and cultural activities). The platform allows students to upload digitalized certificates, choose the appropriate category, and track their progress in real-time against the total hours required by their curriculum. Coordinators and administrators are provided with a centralized validation dashboard to evaluate, approve, or reject certificates, entering the final validated hours.
 
@@ -168,7 +164,7 @@ O banco de dados será populado automaticamente pelo `AdminSeeder` com dados de 
 
 ---
 
-## 🔒 LGPD & Data Privacy Compliance (Lei Geral de Proteção de Dados)
+## LGPD & Data Privacy Compliance (Lei Geral de Proteção de Dados)
 
 Because this application processes personal registration data (such as name, academic record/RA, email, and course enrollment) and documents containing personal details of students and third parties (certificates), privacy by design was a core development guideline, in compliance with Brazilian Federal Law nº 13.709/2018 (LGPD).
 
@@ -184,7 +180,7 @@ Because this application processes personal registration data (such as name, aca
 
 ---
 
-## 🛠️ Tech Stack (Backend)
+## Tech Stack (Backend)
 
 * **Core Backend:** Java 17, Spring Boot 3.2.4 (Spring Web, Spring Security, Validation)
 * **Database:** PostgreSQL (production), H2 Database (local development and testing)
@@ -196,7 +192,7 @@ Because this application processes personal registration data (such as name, aca
 
 ---
 
-## ⚙️ Getting Started (Local Development)
+## Getting Started (Local Development)
 
 Follow the steps below to configure and run the backend environment locally.
 
@@ -243,7 +239,7 @@ The database will be automatically seeded with test data on the first run by `Ad
 
 ---
 
-## 📊 Core API Endpoints
+## Core API Endpoints
 
 | Method | Endpoint | Description | Scope / Access Rule |
 |---|---|---|---|
@@ -262,7 +258,7 @@ The database will be automatically seeded with test data on the first run by `Ad
 
 ---
 
-## 📝 Future Improvements
+## Future Improvements
 
 * **OCR Refinement with NLP:** Implement Natural Language Processing (NLP) techniques for advanced entity recognition and reduced false positives in workload extraction.
 * **Audit Trail & Action Logs:** Maintain a detailed log history of certificate actions taken by coordinators for audit transparency.
@@ -271,7 +267,7 @@ The database will be automatically seeded with test data on the first run by `Ad
 
 ---
 
-## 👥 Authors & Project Team
+## Authors & Project Team
 
 * **Homero Flávio**
 * **Joelson José**
@@ -282,5 +278,4 @@ The database will be automatically seeded with test data on the first run by `Ad
 * **Thayanne Rodrigues**
 
 ### Academic Advisors
-* **Academic Advisor / Professor:** Prof. ____________
 * **Technical English Course Professor:** Prof. Leonardo Trevas
