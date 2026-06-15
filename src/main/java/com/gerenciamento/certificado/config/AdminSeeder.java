@@ -108,18 +108,21 @@ public class AdminSeeder implements CommandLineRunner {
                 "412\n" +
                 "%%EOF").getBytes();
 
-        // 7. Criar Alunos com nomes reais
-        String[] nomesAds = {"Maria Oliveira", "Carlos Souza", "Ana Costa", "Pedro Silva", "Julia Lima"};
-        String[] nomesJogos = {"Lucas Ferreira", "Beatriz Rocha", "Roberto Almeida", "Carla Mendes", "Gabriel Santos"};
+        // 7. Criar Alunos com nomes reais (8 por curso)
+        String[] nomesAds = {"Maria Oliveira", "Carlos Souza", "Ana Costa", "Pedro Silva", "Julia Lima", "Bruno Rocha", "Amanda Fernandes", "Ricardo Santos"};
+        String[] nomesJogos = {"Lucas Ferreira", "Beatriz Rocha", "Roberto Almeida", "Carla Mendes", "Gabriel Santos", "Patricia Lima", "Fernando Souza", "Mariana Alves"};
 
         for (int i = 0; i < nomesAds.length; i++) {
             User aluno;
             if (i == 0) {
                 aluno = getOrCreateUser(nomesAds[i], "aluno.ads" + i + "@teste.com", "aluno123", Role.ALUNO, new java.util.HashSet<>(Arrays.asList(cursoAds, cursoJogos)), turmaAds);
+                for (int j = 1; j <= 15; j++) {
+                    criarCertificadoSeNaoExistir(aluno, regraAdsParaCert, fakePdf, "Certificado ADS " + j + " - " + nomesAds[i]);
+                }
             } else {
                 aluno = getOrCreateUser(nomesAds[i], "aluno.ads" + i + "@teste.com", "aluno123", Role.ALUNO, new java.util.HashSet<>(Arrays.asList(cursoAds)), turmaAds);
+                criarCertificadoSeNaoExistir(aluno, regraAdsParaCert, fakePdf, "Certificado ADS - " + nomesAds[i]);
             }
-            criarCertificadoSeNaoExistir(aluno, regraAdsParaCert, fakePdf, "Certificado ADS - " + nomesAds[i]);
         }
 
         for (int i = 0; i < nomesJogos.length; i++) {
@@ -131,7 +134,9 @@ public class AdminSeeder implements CommandLineRunner {
     }
 
     private void criarCertificadoSeNaoExistir(User aluno, Regra regra, byte[] arquivo, String nome) {
-        if (certificadoRepository.findByAlunoId(aluno.getId()).isEmpty()) {
+        boolean exists = certificadoRepository.findAll().stream()
+                .anyMatch(c -> c.getNome().equals(nome) && c.getAluno().getId().equals(aluno.getId()));
+        if (!exists) {
             Certificado cert = Certificado.builder()
                     .nome(nome)
                     .cargaHoraria(20)
@@ -143,7 +148,7 @@ public class AdminSeeder implements CommandLineRunner {
                     .regra(regra)
                     .build();
             certificadoRepository.save(cert);
-            System.out.println("Certificado criado para: " + aluno.getNome());
+            System.out.println("Certificado criado para: " + aluno.getNome() + " (" + nome + ")");
         }
     }
 
